@@ -40,7 +40,7 @@ def generate_task_fields(prompt: str) -> dict:
     try:
         client = genai.Client(api_key=settings.GEMINI_API_KEY)
         response = client.models.generate_content(
-            model="gemini-2.0-flash",
+            model="gemini-2.5-flash",
             contents=f"Descripción de la tarea:\n\"{prompt}\"",
             config=types.GenerateContentConfig(
                 system_instruction=_SYSTEM_PROMPT,

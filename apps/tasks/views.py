@@ -99,6 +99,7 @@ def task_create_view(request, project_pk):
         "steps": [],
         "tools": [],
         "materials": [],
+        "ai_data": None,
     })
 
 
@@ -136,6 +137,7 @@ def task_edit_view(request, pk):
         "steps": list(task.steps.values("order", "description")),
         "tools": list(task.tools.values("name")),
         "materials": list(task.materials.values("name", "quantity", "unit")),
+        "ai_data": None,
     })
 
 

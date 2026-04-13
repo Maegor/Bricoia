@@ -7,39 +7,61 @@
 
 <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Detalles</h2>
 
-<div class="grid sm:grid-cols-2 gap-4 mb-4">
-  <div class="{% if ai_data %}ring-2 ring-blue-300 rounded-lg p-2{% endif %}">
-    <label class="block text-sm font-medium text-gray-700 mb-1">
-      Dificultad {% if ai_data %}<span class="text-blue-400 text-xs">✨ IA</span>{% endif %}
-    </label>
-    <select name="difficulty"
-            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
-      <option value="">— Seleccionar —</option>
-      <option value="easy" {% if form.difficulty.value == "easy" or ai_data.difficulty == "easy" %}selected{% endif %}>Fácil</option>
-      <option value="medium" {% if form.difficulty.value == "medium" or ai_data.difficulty == "medium" %}selected{% endif %}>Media</option>
-      <option value="hard" {% if form.difficulty.value == "hard" or ai_data.difficulty == "hard" %}selected{% endif %}>Difícil</option>
-      <option value="expert" {% if form.difficulty.value == "expert" or ai_data.difficulty == "expert" %}selected{% endif %}>Experto</option>
-    </select>
+{% if ai_data %}
+  {% with difficulty_val=ai_data.difficulty time_val=ai_data.estimated_time ai_badge='<span class="text-blue-400 text-xs">✨ IA</span>' %}
+  <div class="grid sm:grid-cols-2 gap-4 mb-4">
+    <div class="ring-2 ring-blue-300 rounded-lg p-2">
+      <label class="block text-sm font-medium text-gray-700 mb-1">
+        Dificultad <span class="text-blue-400 text-xs">✨ IA</span>
+      </label>
+      <select name="difficulty"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+        <option value="">— Seleccionar —</option>
+        <option value="easy"   {% if difficulty_val == "easy"   %}selected{% endif %}>Fácil</option>
+        <option value="medium" {% if difficulty_val == "medium" %}selected{% endif %}>Media</option>
+        <option value="hard"   {% if difficulty_val == "hard"   %}selected{% endif %}>Difícil</option>
+        <option value="expert" {% if difficulty_val == "expert" %}selected{% endif %}>Experto</option>
+      </select>
+    </div>
+    <div class="ring-2 ring-blue-300 rounded-lg p-2">
+      <label class="block text-sm font-medium text-gray-700 mb-1">
+        Tiempo estimado (min) <span class="text-blue-400 text-xs">✨ IA</span>
+      </label>
+      <input type="number" name="estimated_time" min="1"
+             value="{{ time_val|default:'' }}"
+             class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+             placeholder="Minutos">
+    </div>
   </div>
-
-  <div class="{% if ai_data %}ring-2 ring-blue-300 rounded-lg p-2{% endif %}">
-    <label class="block text-sm font-medium text-gray-700 mb-1">
-      Tiempo estimado (min) {% if ai_data %}<span class="text-blue-400 text-xs">✨ IA</span>{% endif %}
-    </label>
-    <input type="number" name="estimated_time" min="1"
-           value="{{ form.estimated_time.value|default:ai_data.estimated_time|default:'' }}"
-           class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-           placeholder="Minutos">
+  {% endwith %}
+{% else %}
+  <div class="grid sm:grid-cols-2 gap-4 mb-4">
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Dificultad</label>
+      <select name="difficulty"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+        <option value="">— Seleccionar —</option>
+        <option value="easy"   {% if form.difficulty.value == "easy"   %}selected{% endif %}>Fácil</option>
+        <option value="medium" {% if form.difficulty.value == "medium" %}selected{% endif %}>Media</option>
+        <option value="hard"   {% if form.difficulty.value == "hard"   %}selected{% endif %}>Difícil</option>
+        <option value="expert" {% if form.difficulty.value == "expert" %}selected{% endif %}>Experto</option>
+      </select>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Tiempo estimado (min)</label>
+      <input type="number" name="estimated_time" min="1"
+             value="{{ form.estimated_time.value|default:'' }}"
+             class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+             placeholder="Minutos">
+    </div>
   </div>
-</div>
+{% endif %}
 
 <!-- Pasos -->
 <div class="mb-4">
-  <div class="flex items-center justify-between mb-2">
-    <label class="text-sm font-medium text-gray-700">
-      Pasos {% if ai_data and ai_data.steps %}<span class="text-blue-400 text-xs">✨ IA</span>{% endif %}
-    </label>
-  </div>
+  <label class="text-sm font-medium text-gray-700 block mb-2">
+    Pasos {% if ai_data and ai_data.steps %}<span class="text-blue-400 text-xs">✨ IA</span>{% endif %}
+  </label>
   <div id="steps-container" class="{% if ai_data and ai_data.steps %}ring-2 ring-blue-300 rounded-lg p-2{% endif %}">
     {% if ai_data and ai_data.steps %}
       {% for step in ai_data.steps %}
@@ -77,11 +99,9 @@
 
 <!-- Herramientas -->
 <div class="mb-4">
-  <div class="flex items-center justify-between mb-2">
-    <label class="text-sm font-medium text-gray-700">
-      Herramientas {% if ai_data and ai_data.tools %}<span class="text-blue-400 text-xs">✨ IA</span>{% endif %}
-    </label>
-  </div>
+  <label class="text-sm font-medium text-gray-700 block mb-2">
+    Herramientas {% if ai_data and ai_data.tools %}<span class="text-blue-400 text-xs">✨ IA</span>{% endif %}
+  </label>
   <div id="tools-container" class="{% if ai_data and ai_data.tools %}ring-2 ring-blue-300 rounded-lg p-2{% endif %}">
     {% if ai_data and ai_data.tools %}
       {% for tool in ai_data.tools %}
@@ -117,11 +137,9 @@
 
 <!-- Materiales -->
 <div>
-  <div class="flex items-center justify-between mb-2">
-    <label class="text-sm font-medium text-gray-700">
-      Materiales {% if ai_data and ai_data.materials %}<span class="text-blue-400 text-xs">✨ IA</span>{% endif %}
-    </label>
-  </div>
+  <label class="text-sm font-medium text-gray-700 block mb-2">
+    Materiales {% if ai_data and ai_data.materials %}<span class="text-blue-400 text-xs">✨ IA</span>{% endif %}
+  </label>
   <div id="materials-container" class="{% if ai_data and ai_data.materials %}ring-2 ring-blue-300 rounded-lg p-2{% endif %}">
     {% if ai_data and ai_data.materials %}
       {% for mat in ai_data.materials %}
