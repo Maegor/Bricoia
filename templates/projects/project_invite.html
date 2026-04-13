@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Miembros — {{ project.name }}{% endblock %}
+
+{% block content %}
+<div class="max-w-lg mx-auto">
+  <div class="flex items-center gap-3 mb-6">
+    <a href="{% url 'project_detail' project.pk %}" class="text-gray-400 hover:text-gray-600">&#8592;</a>
+    <h1 class="text-2xl font-bold text-gray-800">Miembros — {{ project.name }}</h1>
+  </div>
+
+  <!-- Lista de miembros -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6 divide-y divide-gray-100">
+    {% for member in members %}
+      <div class="flex items-center justify-between px-4 py-3">
+        <div>
+          <p class="text-sm font-medium text-gray-800">{{ member.user.username }}</p>
+          <p class="text-xs text-gray-400">{{ member.user.email }}</p>
+        </div>
+        <span class="text-xs px-2 py-0.5 rounded
+          {% if member.role == 'owner' %}bg-indigo-100 text-indigo-700{% else %}bg-gray-100 text-gray-600{% endif %}">
+          {{ member.get_role_display }}
+        </span>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Formulario de invitación -->
+  {% if membership.role == "owner" %}
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+      <h2 class="text-sm font-semibold text-gray-700 mb-3">Invitar usuario</h2>
+      <form method="post" class="flex gap-2">
+        {% csrf_token %}
+        <input type="text" name="identifier"
+               placeholder="Nombre de usuario o email"
+               class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+               required>
+        <button type="submit"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+          Invitar
+        </button>
+      </form>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

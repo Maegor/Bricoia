@@ -1,0 +1,20 @@
+<div class="material-row flex items-center gap-2 mb-2">
+  <input type="text"
+         name="materials-{{ index }}-name"
+         class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+         placeholder="Material">
+  <input type="number"
+         name="materials-{{ index }}-quantity"
+         step="0.01" min="0"
+         class="w-20 border border-gray-300 rounded-lg px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+         placeholder="Cant.">
+  <input type="text"
+         name="materials-{{ index }}-unit"
+         class="w-20 border border-gray-300 rounded-lg px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+         placeholder="Unidad">
+  <button type="button"
+          class="text-gray-400 hover:text-red-500 flex-shrink-0 text-lg leading-none"
+          hx-on:click="this.closest('.material-row').remove()">
+    &times;
+  </button>
+</div>

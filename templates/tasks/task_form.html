@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load task_filters %}
+{% block title %}{% if task %}Editar tarea{% else %}Nueva tarea{% endif %} — Bricoia{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+  <div class="flex items-center gap-3 mb-6">
+    <a href="{% url 'project_detail' project.pk %}" class="text-gray-400 hover:text-gray-600">&#8592;</a>
+    <h1 class="text-2xl font-bold text-gray-800">
+      {% if task %}Editar tarea{% else %}Nueva tarea{% endif %}
+    </h1>
+  </div>
+
+  <form method="post" id="task-form" novalidate>
+    {% csrf_token %}
+    <input type="hidden" name="ai_generated" id="ai_generated_flag" value="0">
+
+    <!-- Datos básicos -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-4">
+      <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Datos básicos</h2>
+
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          Nombre <span class="text-red-500">*</span>
+        </label>
+        {{ form.name }}
+        {% for error in form.name.errors %}<p class="text-red-500 text-xs mt-1">{{ error }}</p>{% endfor %}
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          Descripción <span class="text-red-500">*</span>
+        </label>
+        {{ form.description }}
+        {% for error in form.description.errors %}<p class="text-red-500 text-xs mt-1">{{ error }}</p>{% endfor %}
+      </div>
+
+      <div class="mb-2">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+        {{ form.status }}
+      </div>
+    </div>
+
+    <!-- Sección IA -->
+    <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-5 mb-4">
+      <h2 class="text-sm font-semibold text-indigo-700 mb-1">✨ Generar con IA</h2>
+      <p class="text-xs text-indigo-500 mb-3">Describe la tarea y Gemini rellenará dificultad, tiempo, pasos, herramientas y materiales.</p>
+
+      <div id="ai-generator">
+        <textarea id="ai-prompt" name="prompt" maxlength="500" rows="2"
+                  class="w-full border border-indigo-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white mb-2"
+                  placeholder="Ej: montar una estantería de madera con 5 baldas en pared de ladrillo..."></textarea>
+        <div class="flex items-center gap-3">
+          <button id="ai-generate-btn" type="button"
+                  hx-post="{% url 'ai_generate' %}"
+                  hx-target="#ai-fields"
+                  hx-swap="innerHTML"
+                  hx-trigger="click"
+                  hx-include="#ai-prompt"
+                  hx-indicator="#ai-spinner"
+                  class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+            ✨ Generar
+          </button>
+          <span id="ai-spinner" class="htmx-indicator text-sm text-indigo-500">⏳ Generando…</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detalles (IA o manual) -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-4" id="ai-fields">
+      {% include "tasks/partials/ai_detail_fields.html" with form=form steps=steps tools=tools materials=materials %}
+    </div>
+
+    <!-- Botones -->
+    <div class="flex gap-3">
+      <a href="{% url 'project_detail' project.pk %}"
+         class="flex-1 text-center border border-gray-300 text-gray-700 text-sm font-medium py-2.5 rounded-lg hover:bg-gray-50 transition-colors">
+        Cancelar
+      </a>
+      <button type="submit"
+              class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg text-sm transition-colors">
+        {% if task %}Guardar cambios{% else %}Crear tarea{% endif %}
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Bricoia{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+<body
+  class="bg-gray-50 min-h-screen"
+  hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+
+  <!-- Header -->
+  <header class="bg-white shadow-sm">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="{% url 'project_list' %}" class="text-xl font-bold text-indigo-600">🔨 Bricoia</a>
+
+      <!-- Mobile hamburger (CSS-only) -->
+      <input type="checkbox" id="menu-toggle" class="hidden peer">
+      <label for="menu-toggle" class="md:hidden cursor-pointer text-gray-600 text-2xl select-none">&#9776;</label>
+
+      <!-- Nav links -->
+      <nav class="hidden peer-checked:flex flex-col absolute top-14 left-0 right-0 bg-white shadow-md z-50 px-4 py-3 space-y-2
+                  md:static md:flex md:flex-row md:items-center md:space-y-0 md:space-x-6 md:shadow-none md:py-0 md:px-0">
+        {% if user.is_authenticated %}
+          <a href="{% url 'project_list' %}" class="text-gray-700 hover:text-indigo-600 text-sm font-medium">Proyectos</a>
+          <span class="text-gray-500 text-sm hidden md:inline">{{ user.username }}</span>
+          <form method="post" action="{% url 'logout' %}" class="inline">
+            {% csrf_token %}
+            <button type="submit" class="text-gray-600 hover:text-red-600 text-sm font-medium">Cerrar sesión</button>
+          </form>
+        {% else %}
+          <a href="{% url 'login' %}" class="text-gray-700 hover:text-indigo-600 text-sm font-medium">Iniciar sesión</a>
+          <a href="{% url 'register' %}" class="bg-indigo-600 text-white text-sm font-medium px-4 py-1.5 rounded-lg hover:bg-indigo-700">Registrarse</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <!-- Flash messages -->
+  {% include "partials/messages.html" %}
+
+  <!-- Main content -->
+  <main class="max-w-5xl mx-auto px-4 py-6">
+    {% block content %}{% endblock %}
+  </main>
+
+</body>
+</html>
