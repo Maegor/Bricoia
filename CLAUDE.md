@@ -59,6 +59,7 @@ DB_PORT=5432
 
 - `Task` → `project` (FK), `status` (pending/in_progress/blocked/cancelled), `difficulty` (easy/medium/hard/expert), `ai_generated` (bool). Índice compuesto `(project, status)`.
 - `Step` → `task` (FK), `order` (SmallInt). Unique `(task, order)`. Ordering por `order`.
+- `Comment` → `task` (FK), `author` (FK User), `body` (Text), `created_at` (auto). Índice `(task, created_at)`. Ordering por `created_at`.
 - `ProjectMember` → relación many-to-many User↔Project con rol. Unique `(project, user)`.
 
 ### Patrones importantes
@@ -86,7 +87,9 @@ DB_PORT=5432
 /projects/<pk>/tasks/create/        Crear tarea
 /tasks/<pk>/                        Detalle de tarea
 /tasks/<pk>/edit/                   Editar tarea
+/tasks/<pk>/delete/                 Eliminar tarea (GET: confirmación, POST: borra + redirect)
 /tasks/<pk>/status/                 HTMX: cambiar estado (POST, devuelve partial)
+/tasks/<pk>/comments/add/           HTMX: añadir comentario (POST, devuelve partial comment.html)
 /ai/generate/                       HTMX: generar campos con Gemini (POST, devuelve partial)
 /tasks/partials/step-row/           HTMX: nueva fila de paso (GET)
 /tasks/partials/tool-row/           HTMX: nueva fila de herramienta (GET)

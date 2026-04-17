@@ -1,9 +1,15 @@
 from django import forms
 
-from .models import Material, Step, Task, Tool
+from .models import Comment, Material, Step, Task, Tool
 
-_INPUT_CLASS = "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-_SELECT_CLASS = "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+_INPUT_CLASS = (
+    "w-full bg-[#2e2e2e] border border-[#444] text-white rounded-lg px-3 py-2 "
+    "text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 placeholder-gray-600"
+)
+_SELECT_CLASS = (
+    "w-full bg-[#2e2e2e] border border-[#444] text-white rounded-lg px-3 py-2 "
+    "text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+)
 
 
 class TaskForm(forms.ModelForm):
@@ -46,6 +52,19 @@ class ToolForm(forms.ModelForm):
         }
 
 
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ["body"]
+        widgets = {
+            "body": forms.Textarea(attrs={
+                "class": _INPUT_CLASS,
+                "rows": 3,
+                "placeholder": "Escribe un comentario...",
+            }),
+        }
+
+
 class MaterialForm(forms.ModelForm):
     class Meta:
         model = Material
@@ -53,13 +72,19 @@ class MaterialForm(forms.ModelForm):
         widgets = {
             "name": forms.TextInput(attrs={"class": _INPUT_CLASS, "placeholder": "Material"}),
             "quantity": forms.NumberInput(attrs={
-                "class": "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500",
+                "class": (
+                    "w-full bg-[#2e2e2e] border border-[#444] text-white rounded-lg px-2 py-2 "
+                    "text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                ),
                 "placeholder": "Cant.",
                 "step": "0.01",
                 "min": 0,
             }),
             "unit": forms.TextInput(attrs={
-                "class": "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500",
+                "class": (
+                    "w-full bg-[#2e2e2e] border border-[#444] text-white rounded-lg px-2 py-2 "
+                    "text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                ),
                 "placeholder": "Unidad",
             }),
         }

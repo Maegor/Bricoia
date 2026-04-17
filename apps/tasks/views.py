@@ -1,12 +1,13 @@
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
 from apps.projects.utils import get_project_membership
 
-from .forms import MaterialForm, StepForm, TaskForm, ToolForm
-from .models import Material, Step, Task, Tool
+from .forms import CommentForm, MaterialForm, StepForm, TaskForm, ToolForm
+from .models import Comment, Material, Step, Task, Tool
 
 
 def _parse_dynamic_lists(post_data):
@@ -21,11 +22,14 @@ def _parse_dynamic_lists(post_data):
 
     i = 0
     while True:
-        desc = post_data.get(f"steps-{i}-description", "").strip()
-        if not desc and f"steps-{i}-description" not in post_data:
+        title_key = f"steps-{i}-title"
+        desc_key = f"steps-{i}-description"
+        title = post_data.get(title_key, "").strip()
+        desc = post_data.get(desc_key, "").strip()
+        if title_key not in post_data and desc_key not in post_data:
             break
-        if desc:
-            steps.append({"order": i + 1, "description": desc})
+        if title or desc:
+            steps.append({"order": i + 1, "title": title, "description": desc})
         i += 1
 
     i = 0
@@ -60,7 +64,7 @@ def _save_related(task, steps_data, tools_data, materials_data):
     task.materials.all().delete()
 
     Step.objects.bulk_create([
-        Step(task=task, order=s["order"], description=s["description"])
+        Step(task=task, order=s["order"], title=s.get("title", ""), description=s["description"])
         for s in steps_data
     ])
     Tool.objects.bulk_create([
@@ -100,6 +104,7 @@ def task_create_view(request, project_pk):
         "tools": [],
         "materials": [],
         "ai_data": None,
+        "show_ai_assistant": True,
     })
 
 
@@ -107,8 +112,11 @@ def task_create_view(request, project_pk):
 def task_detail_view(request, pk):
     task = get_object_or_404(Task, pk=pk)
     get_project_membership(request, task.project_id)
-    task = Task.objects.prefetch_related("steps", "tools", "materials").get(pk=pk)
-    return render(request, "tasks/task_detail.html", {"task": task})
+    task = Task.objects.prefetch_related("steps", "tools", "materials", "comments__author").get(pk=pk)
+    return render(request, "tasks/task_detail.html", {
+        "task": task,
+        "comment_form": CommentForm(),
+    })
 
 
 @login_required
@@ -134,11 +142,27 @@ def task_edit_view(request, pk):
         "form": form,
         "project": task.project,
         "task": task,
-        "steps": list(task.steps.values("order", "description")),
+        "steps": list(task.steps.values("order", "title", "description")),
         "tools": list(task.tools.values("name")),
         "materials": list(task.materials.values("name", "quantity", "unit")),
         "ai_data": None,
+        "show_ai_assistant": False,
     })
+
+
+@login_required
+def task_delete_view(request, pk):
+    task = get_object_or_404(Task, pk=pk)
+    get_project_membership(request, task.project_id)
+    project_pk = task.project_id
+
+    if request.method == "POST":
+        task.delete()
+        if request.headers.get("HX-Request"):
+            return HttpResponse("")
+        return redirect("project_detail", pk=project_pk)
+
+    return render(request, "tasks/task_delete_confirm.html", {"task": task})
 
 
 # ── HTMX endpoints ────────────────────────────────────────────────────────────
@@ -153,6 +177,21 @@ def task_status_view(request, pk):
         task.status = new_status
         task.save(update_fields=["status", "updated_at"])
     return render(request, "tasks/partials/task_status_badge.html", {"task": task})
+
+
+@login_required
+@require_POST
+def task_comment_add(request, pk):
+    task = get_object_or_404(Task, pk=pk)
+    get_project_membership(request, task.project_id)
+    form = CommentForm(request.POST)
+    if form.is_valid():
+        comment = form.save(commit=False)
+        comment.task = task
+        comment.author = request.user
+        comment.save()
+        return render(request, "tasks/partials/comment.html", {"comment": comment})
+    return render(request, "tasks/partials/comment.html", {"comment": None, "error": True})
 
 
 @login_required

@@ -1,21 +1,21 @@
 {% load task_filters %}
 {% if ai_error %}
-  <div class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-3 mb-4">
+  <div class="text-xs text-red-400 bg-red-900/30 border border-red-800 rounded-lg px-4 py-3 mb-4">
     {{ ai_error }}
   </div>
 {% endif %}
 
-<h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Detalles</h2>
+<h2 class="text-xs font-semibold text-gray-600 uppercase tracking-widest mb-5">Detalles</h2>
 
 {% if ai_data %}
-  {% with difficulty_val=ai_data.difficulty time_val=ai_data.estimated_time ai_badge='<span class="text-blue-400 text-xs">✨ IA</span>' %}
-  <div class="grid sm:grid-cols-2 gap-4 mb-4">
-    <div class="ring-2 ring-blue-300 rounded-lg p-2">
-      <label class="block text-sm font-medium text-gray-700 mb-1">
-        Dificultad <span class="text-blue-400 text-xs">✨ IA</span>
+  {% with difficulty_val=ai_data.difficulty time_val=ai_data.estimated_time %}
+  <div class="grid sm:grid-cols-2 gap-4 mb-5">
+    <div class="ring-2 ring-orange-500/40 rounded-lg p-3">
+      <label class="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">
+        Dificultad <span class="text-orange-500 text-xs">✨ IA</span>
       </label>
       <select name="difficulty"
-              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+              class="w-full bg-[#2e2e2e] border border-[#444] text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
         <option value="">— Seleccionar —</option>
         <option value="easy"   {% if difficulty_val == "easy"   %}selected{% endif %}>Fácil</option>
         <option value="medium" {% if difficulty_val == "medium" %}selected{% endif %}>Media</option>
@@ -23,23 +23,23 @@
         <option value="expert" {% if difficulty_val == "expert" %}selected{% endif %}>Experto</option>
       </select>
     </div>
-    <div class="ring-2 ring-blue-300 rounded-lg p-2">
-      <label class="block text-sm font-medium text-gray-700 mb-1">
-        Tiempo estimado (min) <span class="text-blue-400 text-xs">✨ IA</span>
+    <div class="ring-2 ring-orange-500/40 rounded-lg p-3">
+      <label class="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">
+        Tiempo estimado (min) <span class="text-orange-500 text-xs">✨ IA</span>
       </label>
       <input type="number" name="estimated_time" min="1"
              value="{{ time_val|default:'' }}"
-             class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+             class="w-full bg-[#2e2e2e] border border-[#444] text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
              placeholder="Minutos">
     </div>
   </div>
   {% endwith %}
 {% else %}
-  <div class="grid sm:grid-cols-2 gap-4 mb-4">
+  <div class="grid sm:grid-cols-2 gap-4 mb-5">
     <div>
-      <label class="block text-sm font-medium text-gray-700 mb-1">Dificultad</label>
+      <label class="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Dificultad</label>
       <select name="difficulty"
-              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+              class="w-full bg-[#2e2e2e] border border-[#444] text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
         <option value="">— Seleccionar —</option>
         <option value="easy"   {% if form.difficulty.value == "easy"   %}selected{% endif %}>Fácil</option>
         <option value="medium" {% if form.difficulty.value == "medium" %}selected{% endif %}>Media</option>
@@ -48,41 +48,59 @@
       </select>
     </div>
     <div>
-      <label class="block text-sm font-medium text-gray-700 mb-1">Tiempo estimado (min)</label>
+      <label class="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Tiempo estimado (min)</label>
       <input type="number" name="estimated_time" min="1"
              value="{{ form.estimated_time.value|default:'' }}"
-             class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+             class="w-full bg-[#2e2e2e] border border-[#444] text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
              placeholder="Minutos">
     </div>
   </div>
 {% endif %}
 
 <!-- Pasos -->
-<div class="mb-4">
-  <label class="text-sm font-medium text-gray-700 block mb-2">
-    Pasos {% if ai_data and ai_data.steps %}<span class="text-blue-400 text-xs">✨ IA</span>{% endif %}
+<div class="mb-5">
+  <label class="text-xs font-semibold text-gray-500 uppercase tracking-widest block mb-2">
+    Pasos {% if ai_data and ai_data.steps %}<span class="text-orange-500 text-xs">✨ IA</span>{% endif %}
   </label>
-  <div id="steps-container" class="{% if ai_data and ai_data.steps %}ring-2 ring-blue-300 rounded-lg p-2{% endif %}">
+  <div id="steps-container" class="{% if ai_data and ai_data.steps %}ring-2 ring-orange-500/40 rounded-lg p-3{% endif %}">
     {% if ai_data and ai_data.steps %}
       {% for step in ai_data.steps %}
-        <div class="step-row flex items-center gap-2 mb-2">
-          <span class="text-xs text-gray-400 w-5 text-right flex-shrink-0">{{ forloop.counter }}.</span>
-          <input type="text" name="steps-{{ forloop.counter0 }}-description"
-                 value="{{ step }}"
-                 class="flex-1 border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-          <button type="button" class="text-gray-400 hover:text-red-500 flex-shrink-0 text-lg leading-none"
-                  hx-on:click="this.closest('.step-row').remove()">&times;</button>
+        <div class="step-row mb-3">
+          <div class="flex items-start gap-2">
+            <span class="text-xs text-orange-500 w-5 text-right flex-shrink-0 mt-2.5">{{ forloop.counter }}.</span>
+            <div class="flex-1 space-y-1.5">
+              <input type="text" name="steps-{{ forloop.counter0 }}-title"
+                     value="{{ step.title }}"
+                     class="w-full bg-[#2e2e2e] border border-orange-500/40 text-white font-semibold rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                     placeholder="Título del paso">
+              <input type="text" name="steps-{{ forloop.counter0 }}-description"
+                     value="{{ step.description }}"
+                     class="w-full bg-[#2e2e2e] border border-orange-500/40 text-gray-400 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                     placeholder="Descripción detallada">
+            </div>
+            <button type="button" class="text-gray-600 hover:text-red-400 flex-shrink-0 text-lg leading-none transition-colors mt-2"
+                    hx-on:click="this.closest('.step-row').remove()">&times;</button>
+          </div>
         </div>
       {% endfor %}
     {% elif steps %}
       {% for step in steps %}
-        <div class="step-row flex items-center gap-2 mb-2">
-          <span class="text-xs text-gray-400 w-5 text-right flex-shrink-0">{{ forloop.counter }}.</span>
-          <input type="text" name="steps-{{ forloop.counter0 }}-description"
-                 value="{{ step.description }}"
-                 class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-          <button type="button" class="text-gray-400 hover:text-red-500 flex-shrink-0 text-lg leading-none"
-                  hx-on:click="this.closest('.step-row').remove()">&times;</button>
+        <div class="step-row mb-3">
+          <div class="flex items-start gap-2">
+            <span class="text-xs text-gray-700 w-5 text-right flex-shrink-0 mt-2.5">{{ forloop.counter }}.</span>
+            <div class="flex-1 space-y-1.5">
+              <input type="text" name="steps-{{ forloop.counter0 }}-title"
+                     value="{{ step.title }}"
+                     class="w-full bg-[#2e2e2e] border border-[#444] text-white font-semibold rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                     placeholder="Título del paso">
+              <input type="text" name="steps-{{ forloop.counter0 }}-description"
+                     value="{{ step.description }}"
+                     class="w-full bg-[#2e2e2e] border border-[#444] text-gray-400 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                     placeholder="Descripción detallada">
+            </div>
+            <button type="button" class="text-gray-600 hover:text-red-400 flex-shrink-0 text-lg leading-none transition-colors mt-2"
+                    hx-on:click="this.closest('.step-row').remove()">&times;</button>
+          </div>
         </div>
       {% endfor %}
     {% endif %}
@@ -92,24 +110,24 @@
           hx-target="#steps-container"
           hx-swap="beforeend"
           hx-vals='js:{"index": document.querySelectorAll(".step-row").length}'
-          class="text-sm text-indigo-600 hover:underline mt-1">
+          class="text-xs text-orange-500 hover:text-orange-400 mt-2 uppercase tracking-widest transition-colors">
     + Añadir paso
   </button>
 </div>
 
 <!-- Herramientas -->
-<div class="mb-4">
-  <label class="text-sm font-medium text-gray-700 block mb-2">
-    Herramientas {% if ai_data and ai_data.tools %}<span class="text-blue-400 text-xs">✨ IA</span>{% endif %}
+<div class="mb-5">
+  <label class="text-xs font-semibold text-gray-500 uppercase tracking-widest block mb-2">
+    Herramientas {% if ai_data and ai_data.tools %}<span class="text-orange-500 text-xs">✨ IA</span>{% endif %}
   </label>
-  <div id="tools-container" class="{% if ai_data and ai_data.tools %}ring-2 ring-blue-300 rounded-lg p-2{% endif %}">
+  <div id="tools-container" class="{% if ai_data and ai_data.tools %}ring-2 ring-orange-500/40 rounded-lg p-3{% endif %}">
     {% if ai_data and ai_data.tools %}
       {% for tool in ai_data.tools %}
         <div class="tool-row flex items-center gap-2 mb-2">
           <input type="text" name="tools-{{ forloop.counter0 }}-name"
                  value="{{ tool }}"
-                 class="flex-1 border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-          <button type="button" class="text-gray-400 hover:text-red-500 flex-shrink-0 text-lg leading-none"
+                 class="flex-1 bg-[#2e2e2e] border border-orange-500/40 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
+          <button type="button" class="text-gray-600 hover:text-red-400 flex-shrink-0 text-lg leading-none transition-colors"
                   hx-on:click="this.closest('.tool-row').remove()">&times;</button>
         </div>
       {% endfor %}
@@ -118,8 +136,8 @@
         <div class="tool-row flex items-center gap-2 mb-2">
           <input type="text" name="tools-{{ forloop.counter0 }}-name"
                  value="{{ tool.name }}"
-                 class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-          <button type="button" class="text-gray-400 hover:text-red-500 flex-shrink-0 text-lg leading-none"
+                 class="flex-1 bg-[#2e2e2e] border border-[#444] text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
+          <button type="button" class="text-gray-600 hover:text-red-400 flex-shrink-0 text-lg leading-none transition-colors"
                   hx-on:click="this.closest('.tool-row').remove()">&times;</button>
         </div>
       {% endfor %}
@@ -130,33 +148,33 @@
           hx-target="#tools-container"
           hx-swap="beforeend"
           hx-vals='js:{"index": document.querySelectorAll(".tool-row").length}'
-          class="text-sm text-indigo-600 hover:underline mt-1">
+          class="text-xs text-orange-500 hover:text-orange-400 mt-2 uppercase tracking-widest transition-colors">
     + Añadir herramienta
   </button>
 </div>
 
 <!-- Materiales -->
 <div>
-  <label class="text-sm font-medium text-gray-700 block mb-2">
-    Materiales {% if ai_data and ai_data.materials %}<span class="text-blue-400 text-xs">✨ IA</span>{% endif %}
+  <label class="text-xs font-semibold text-gray-500 uppercase tracking-widest block mb-2">
+    Materiales {% if ai_data and ai_data.materials %}<span class="text-orange-500 text-xs">✨ IA</span>{% endif %}
   </label>
-  <div id="materials-container" class="{% if ai_data and ai_data.materials %}ring-2 ring-blue-300 rounded-lg p-2{% endif %}">
+  <div id="materials-container" class="{% if ai_data and ai_data.materials %}ring-2 ring-orange-500/40 rounded-lg p-3{% endif %}">
     {% if ai_data and ai_data.materials %}
       {% for mat in ai_data.materials %}
         <div class="material-row flex items-center gap-2 mb-2">
           <input type="text" name="materials-{{ forloop.counter0 }}-name"
                  value="{{ mat.name }}"
-                 class="flex-1 border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                 class="flex-1 bg-[#2e2e2e] border border-orange-500/40 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
                  placeholder="Material">
           <input type="number" name="materials-{{ forloop.counter0 }}-quantity"
                  value="{{ mat.quantity|default:'' }}" step="0.01" min="0"
-                 class="w-20 border border-blue-200 rounded-lg px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                 class="w-20 bg-[#2e2e2e] border border-orange-500/40 text-white rounded-lg px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
                  placeholder="Cant.">
           <input type="text" name="materials-{{ forloop.counter0 }}-unit"
                  value="{{ mat.unit|default:'' }}"
-                 class="w-20 border border-blue-200 rounded-lg px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                 class="w-20 bg-[#2e2e2e] border border-orange-500/40 text-white rounded-lg px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
                  placeholder="Unidad">
-          <button type="button" class="text-gray-400 hover:text-red-500 flex-shrink-0 text-lg leading-none"
+          <button type="button" class="text-gray-600 hover:text-red-400 flex-shrink-0 text-lg leading-none transition-colors"
                   hx-on:click="this.closest('.material-row').remove()">&times;</button>
         </div>
       {% endfor %}
@@ -165,17 +183,17 @@
         <div class="material-row flex items-center gap-2 mb-2">
           <input type="text" name="materials-{{ forloop.counter0 }}-name"
                  value="{{ mat.name }}"
-                 class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                 class="flex-1 bg-[#2e2e2e] border border-[#444] text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
                  placeholder="Material">
           <input type="number" name="materials-{{ forloop.counter0 }}-quantity"
                  value="{{ mat.quantity|default:'' }}" step="0.01" min="0"
-                 class="w-20 border border-gray-300 rounded-lg px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                 class="w-20 bg-[#2e2e2e] border border-[#444] text-white rounded-lg px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
                  placeholder="Cant.">
           <input type="text" name="materials-{{ forloop.counter0 }}-unit"
                  value="{{ mat.unit|default:'' }}"
-                 class="w-20 border border-gray-300 rounded-lg px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                 class="w-20 bg-[#2e2e2e] border border-[#444] text-white rounded-lg px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
                  placeholder="Unidad">
-          <button type="button" class="text-gray-400 hover:text-red-500 flex-shrink-0 text-lg leading-none"
+          <button type="button" class="text-gray-600 hover:text-red-400 flex-shrink-0 text-lg leading-none transition-colors"
                   hx-on:click="this.closest('.material-row').remove()">&times;</button>
         </div>
       {% endfor %}
@@ -186,7 +204,7 @@
           hx-target="#materials-container"
           hx-swap="beforeend"
           hx-vals='js:{"index": document.querySelectorAll(".material-row").length}'
-          class="text-sm text-indigo-600 hover:underline mt-1">
+          class="text-xs text-orange-500 hover:text-orange-400 mt-2 uppercase tracking-widest transition-colors">
     + Añadir material
   </button>
 </div>
