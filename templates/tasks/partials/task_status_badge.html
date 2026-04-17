@@ -5,7 +5,7 @@
           hx-target="#task-status-{{ task.pk }}"
           hx-swap="outerHTML"
           hx-trigger="change"
-          class="text-xs border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-white {{ task.status|status_badge }}">
+          class="text-xs border border-[#444] rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-orange-500 cursor-pointer {{ task.status|status_badge }}">
     {% for value, label in task.STATUS_CHOICES %}
       <option value="{{ value }}" {% if task.status == value %}selected{% endif %}>{{ label }}</option>
     {% endfor %}

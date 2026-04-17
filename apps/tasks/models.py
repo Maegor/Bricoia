@@ -76,6 +76,7 @@ class Task(models.Model):
 class Step(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="steps")
     order = models.SmallIntegerField(verbose_name="orden")
+    title = models.CharField(max_length=200, blank=True, default="", verbose_name="título")
     description = models.TextField(verbose_name="descripción")
 
     class Meta:
@@ -112,3 +113,24 @@ class Material(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Comment(models.Model):
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="comments")
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="task_comments",
+        verbose_name="autor",
+    )
+    body = models.TextField(verbose_name="comentario")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "comentario"
+        verbose_name_plural = "comentarios"
+        ordering = ["created_at"]
+        indexes = [models.Index(fields=["task", "created_at"])]
+
+    def __str__(self):
+        return f"{self.author.username} en tarea {self.task_id}"

@@ -9,3 +9,21 @@
 .htmx-request.htmx-indicator {
     opacity: 1;
 }
+
+/* Blueprint grid background */
+.blueprint-grid {
+    background-image:
+        linear-gradient(rgba(249, 115, 22, 0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(249, 115, 22, 0.07) 1px, transparent 1px);
+    background-size: 40px 40px;
+}
+
+/* Display font — Bebas Neue */
+.font-display {
+    font-family: 'Bebas Neue', Impact, sans-serif;
+}
+
+/* Dark selects: force native dropdown to use dark palette */
+select {
+    color-scheme: dark;
+}

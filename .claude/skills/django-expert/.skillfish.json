@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "name": "django-expert",
+  "owner": "jeffallan",
+  "repo": "claude-skills",
+  "path": "skills/django-expert",
+  "branch": "main",
+  "sha": "a96227ce0ad451ec7ca8c5b0ae48fca82122cb6a",
+  "source": "manual"
+}
