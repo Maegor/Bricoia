@@ -3,7 +3,7 @@
 {% block title %}{{ task.name }} — Bricoia{% endblock %}
 
 {% block content %}
-<div class="max-w-[480px] mx-auto">
+<div class="max-w-6xl mx-auto">
 
   <!-- Breadcrumb + acciones -->
   <div class="flex items-center justify-between mb-4">
@@ -81,10 +81,8 @@
   <!-- Materiales -->
   <div class="bg-[#16181d] border border-[#262a33] rounded-xl overflow-hidden mb-3">
     <div class="px-4 py-3">
-      <div class="flex items-center justify-between">
-        <h2 class="font-jetbrains text-[11px] font-semibold tracking-[0.18em] uppercase text-[#ff7a3d]">Materiales</h2>
-        {% include "tasks/partials/materials_progress.html" with total=materials_total available=materials_available %}
-      </div>
+      <h2 class="font-jetbrains text-[11px] font-semibold tracking-[0.18em] uppercase text-[#ff7a3d]">Materiales</h2>
+      {% include "tasks/partials/materials_progress.html" with total=materials_total available=materials_available %}
     </div>
     <div class="h-px bg-[#262a33]"></div>
     <div id="materials-grid" class="grid grid-cols-3 gap-1.5 p-3">

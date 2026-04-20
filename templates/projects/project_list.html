@@ -17,7 +17,7 @@
   <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
     {% for membership in memberships %}
       <a href="{% url 'project_detail' membership.project.pk %}"
-         class="block bg-[#242424] rounded-xl p-5 border border-[#333] hover:border-orange-500/40 transition-colors">
+         class="block bg-[#16181d] rounded-xl p-5 border border-[#262a33] hover:border-orange-500/40 transition-colors">
         <div class="flex items-start justify-between mb-2">
           <h2 class="text-sm font-semibold text-white">{{ membership.project.name }}</h2>
           {% if membership.role == "owner" %}

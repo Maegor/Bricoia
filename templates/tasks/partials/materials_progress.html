@@ -2,7 +2,6 @@
      hx-get="{% url 'task_materials_progress' task.pk %}"
      hx-trigger="materialsUpdated from:body"
      hx-swap="outerHTML">
-  <span class="font-jetbrains text-[10px] text-gray-700">{{ total }} ítems</span>
   {% if total > 0 %}
     <div class="flex items-center gap-2 mt-2">
       <div class="flex-1 bg-[#262a33] rounded-full h-1.5 overflow-hidden">

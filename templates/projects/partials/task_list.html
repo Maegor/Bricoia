@@ -1,11 +1,37 @@
 {% load task_filters %}
-<div id="task-list" class="space-y-3 pb-20">
+<div id="task-list" class="pb-20">
+
+<!-- Filtros de estado -->
+<div class="flex flex-wrap gap-2 mb-5">
+  {% for value, label in status_choices %}
+    <a href="?status={{ value }}"
+       hx-get="{% url 'project_detail' project.pk %}?status={{ value }}"
+       hx-target="#task-list"
+       hx-swap="outerHTML"
+       hx-push-url="true"
+       class="text-xs font-medium px-3 py-1.5 rounded-full border transition-colors uppercase tracking-wide
+         {% if status_filter == value %}bg-orange-500 text-black border-orange-500{% else %}bg-[#16181d] text-gray-600 border-[#262a33] hover:border-orange-500/40 hover:text-gray-400{% endif %}">
+      {{ label }}
+    </a>
+  {% endfor %}
+  <a href="?"
+     hx-get="{% url 'project_detail' project.pk %}"
+     hx-target="#task-list"
+     hx-swap="outerHTML"
+     hx-push-url="true"
+     class="text-xs font-medium px-3 py-1.5 rounded-full border transition-colors uppercase tracking-wide
+       {% if not status_filter %}bg-orange-500 text-black border-orange-500{% else %}bg-[#16181d] text-gray-600 border-[#262a33] hover:border-orange-500/40 hover:text-gray-400{% endif %}">
+    Todas
+  </a>
+</div>
+
+<div class="space-y-3">
   {% if tasks %}
     {% for task in tasks %}
-      <div id="task-row-{{ task.pk }}" class="bg-[#242424] rounded-xl border border-[#333] hover:border-[#3a3a3a] transition-colors p-4 flex items-center justify-between gap-4">
+      <div id="task-row-{{ task.pk }}" class="bg-[#16181d] rounded-xl border border-[#262a33] hover:border-[#363b45] transition-colors p-4 flex items-center justify-between gap-4">
         <div class="flex items-center gap-3 min-w-0">
           <!-- Icono de categoría -->
-          <div class="w-10 h-10 rounded-full bg-[#2e2e2e] border border-[#444] flex items-center justify-center flex-shrink-0 text-gray-600">
+          <div class="w-10 h-10 rounded-full bg-[#1c1f26] border border-[#262a33] flex items-center justify-center flex-shrink-0 text-gray-600">
             🔧
           </div>
           <div class="min-w-0">
@@ -47,7 +73,9 @@
         </div>
       </div>
     {% endfor %}
+  </div>
   {% else %}
+  </div>
     <div class="text-center py-16">
       <p class="text-4xl mb-4">📋</p>
       <p class="text-sm text-gray-600 mb-4">
