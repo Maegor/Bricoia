@@ -61,6 +61,7 @@ DB_PORT=5432
 - `Step` → `task` (FK), `order` (SmallInt). Unique `(task, order)`. Ordering por `order`.
 - `Comment` → `task` (FK), `author` (FK User), `body` (Text), `created_at` (auto). Índice `(task, created_at)`. Ordering por `created_at`.
 - `ProjectMember` → relación many-to-many User↔Project con rol. Unique `(project, user)`.
+- `TaskLink` → `task` (FK), `url` (URLField max 500), `description` (CharField max 200). Ordering por `pk`.
 
 ### Patrones importantes
 
@@ -93,6 +94,8 @@ DB_PORT=5432
 /tasks/<pk>/meta/edit/              HTMX: formulario edición dificultad+tiempo (GET)
 /tasks/<pk>/meta/update/            HTMX: guardar dificultad+tiempo (POST, devuelve task_meta_display.html)
 /tasks/<pk>/comments/add/           HTMX: añadir comentario (POST, devuelve partial comment.html)
+/tasks/<pk>/links/add/              HTMX: crear enlace (POST, devuelve link_item.html)
+/tasks/links/<pk>/delete/           HTMX: borrar enlace (POST, devuelve vacío)
 /ai/generate/                       HTMX: generar campos con Gemini (POST, devuelve partial)
 /tasks/partials/step-row/           HTMX: nueva fila de paso (GET)
 /tasks/partials/tool-row/           HTMX: nueva fila de herramienta (GET)

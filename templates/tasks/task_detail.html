@@ -155,6 +155,39 @@
     </div>
   </div>
 
+  <!-- Recursos / Enlaces -->
+  <div class="bg-[#16181d] border border-[#262a33] rounded-xl overflow-hidden mb-3">
+    <div class="px-4 py-3">
+      <h2 class="font-jetbrains text-[11px] font-semibold tracking-[0.18em] uppercase text-[#ff7a3d]">Recursos</h2>
+    </div>
+    <div class="h-px bg-[#262a33]"></div>
+    <div id="links-list" class="px-4">
+      {% for link in task.links.all %}
+        {% include "tasks/partials/link_item.html" with link=link %}
+      {% empty %}
+        <p id="links-empty" class="font-jetbrains text-[11px] text-gray-700 py-3">Aún no hay recursos.</p>
+      {% endfor %}
+    </div>
+    <div class="h-px bg-[#262a33]"></div>
+    <div class="px-4 py-3">
+      <form hx-post="{% url 'link_create' task.pk %}"
+            hx-target="#links-list"
+            hx-swap="beforeend"
+            hx-on::after-request="this.reset()">
+        <input type="url" name="url" placeholder="https://..."
+               class="w-full bg-[#1c1f26] border border-[#262a33] rounded-lg px-3 py-1.5 text-sm text-white placeholder-gray-700 mb-2 focus:outline-none focus:border-[#ff7a3d]/50"
+               required>
+        <input type="text" name="description" placeholder="Descripción del recurso"
+               class="w-full bg-[#1c1f26] border border-[#262a33] rounded-lg px-3 py-1.5 text-sm text-white placeholder-gray-700 mb-2 focus:outline-none focus:border-[#ff7a3d]/50"
+               required>
+        <button type="submit"
+                class="font-jetbrains text-[11px] border border-[#ff7a3d]/40 text-[#ff7a3d] hover:bg-[#ff7a3d]/10 px-3 py-1.5 rounded-lg transition-colors uppercase tracking-widest">
+          + Añadir recurso
+        </button>
+      </form>
+    </div>
+  </div>
+
   <!-- Metadatos -->
   <div class="bg-[#16181d] border border-[#262a33] rounded-xl divide-y divide-[#262a33] font-jetbrains text-[11px]">
     <div class="flex items-center justify-between px-4 py-3">

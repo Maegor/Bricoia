@@ -9,7 +9,7 @@ from django.views.decorators.http import require_POST
 from apps.projects.utils import get_project_membership
 
 from .forms import CommentForm, MaterialForm, StepForm, TaskForm, ToolForm
-from .models import Comment, Material, Step, Task, Tool
+from .models import Comment, Material, Step, Task, TaskLink, Tool
 
 
 def _parse_dynamic_lists(post_data):
@@ -114,7 +114,7 @@ def task_create_view(request, project_pk):
 def task_detail_view(request, pk):
     task = get_object_or_404(Task, pk=pk)
     get_project_membership(request, task.project_id)
-    task = Task.objects.prefetch_related("steps", "tools", "materials", "comments__author").get(pk=pk)
+    task = Task.objects.prefetch_related("steps", "tools", "materials", "comments__author", "links").get(pk=pk)
     tools_total = task.tools.count()
     tools_available = task.tools.filter(available=True).count()
     materials_total = task.materials.count()
@@ -214,6 +214,34 @@ def task_meta_update(request, pk):
     task.estimated_time = int(estimated_time) if estimated_time.isdigit() and int(estimated_time) > 0 else None
     task.save(update_fields=["difficulty", "estimated_time", "updated_at"])
     return render(request, "tasks/partials/task_meta_display.html", {"task": task})
+
+
+@login_required
+@require_POST
+def link_create(request, task_pk):
+    task = get_object_or_404(Task, pk=task_pk)
+    get_project_membership(request, task.project_id)
+    url = request.POST.get("url", "").strip()
+    description = request.POST.get("description", "").strip()
+    if not url or not description:
+        return HttpResponse("")
+    link = TaskLink.objects.create(task=task, url=url, description=description)
+    item_html = render_to_string("tasks/partials/link_item.html", {"link": link}, request=request)
+    oob_html = '<p id="links-empty" hx-swap-oob="true"></p>'
+    return HttpResponse(item_html + oob_html)
+
+
+@login_required
+@require_POST
+def link_delete(request, pk):
+    link = get_object_or_404(TaskLink, pk=pk)
+    task = link.task
+    get_project_membership(request, task.project_id)
+    link.delete()
+    if not task.links.exists():
+        oob = '<div hx-swap-oob="innerHTML:#links-list"><p id="links-empty" class="font-jetbrains text-[11px] text-gray-700 py-3">Aún no hay recursos.</p></div>'
+        return HttpResponse(oob)
+    return HttpResponse("")
 
 
 @login_required

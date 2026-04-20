@@ -136,3 +136,17 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"{self.author.username} en tarea {self.task_id}"
+
+
+class TaskLink(models.Model):
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="links")
+    url = models.URLField(max_length=500, verbose_name="URL")
+    description = models.CharField(max_length=200, verbose_name="descripción")
+
+    class Meta:
+        verbose_name = "enlace"
+        verbose_name_plural = "enlaces"
+        ordering = ["pk"]
+
+    def __str__(self):
+        return self.description
