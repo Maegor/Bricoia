@@ -324,7 +324,9 @@ def tool_delete(request, pk):
     tool = get_object_or_404(Tool, pk=pk)
     get_project_membership(request, tool.task.project_id)
     tool.delete()
-    return HttpResponse("")
+    response = HttpResponse("")
+    response["HX-Trigger"] = "toolsUpdated"
+    return response
 
 
 @login_required
@@ -373,7 +375,9 @@ def material_delete(request, pk):
     material = get_object_or_404(Material, pk=pk)
     get_project_membership(request, material.task.project_id)
     material.delete()
-    return HttpResponse("")
+    response = HttpResponse("")
+    response["HX-Trigger"] = "materialsUpdated"
+    return response
 
 
 @login_required

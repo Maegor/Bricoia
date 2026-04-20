@@ -83,9 +83,8 @@
     <div class="px-4 py-3">
       <div class="flex items-center justify-between">
         <h2 class="font-jetbrains text-[11px] font-semibold tracking-[0.18em] uppercase text-[#ff7a3d]">Materiales</h2>
-        <span class="font-jetbrains text-[10px] text-gray-700">{{ task.materials.count }} ítems</span>
+        {% include "tasks/partials/materials_progress.html" with total=materials_total available=materials_available %}
       </div>
-      {% include "tasks/partials/materials_progress.html" with total=materials_total available=materials_available %}
     </div>
     <div class="h-px bg-[#262a33]"></div>
     <div id="materials-grid" class="grid grid-cols-3 gap-1.5 p-3">
