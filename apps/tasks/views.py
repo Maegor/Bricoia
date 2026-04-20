@@ -30,7 +30,7 @@ def _parse_dynamic_lists(post_data):
         desc = post_data.get(desc_key, "").strip()
         if title_key not in post_data and desc_key not in post_data:
             break
-        if title or desc:
+        if title and desc:
             steps.append({"order": i + 1, "title": title, "description": desc})
         i += 1
 
@@ -244,8 +244,12 @@ def step_edit_form(request, pk):
 def step_update(request, pk):
     step = get_object_or_404(Step, pk=pk)
     get_project_membership(request, step.task.project_id)
-    step.title = request.POST.get("title", "").strip()
-    step.description = request.POST.get("description", "").strip()
+    title = request.POST.get("title", "").strip()
+    description = request.POST.get("description", "").strip()
+    if not title or not description:
+        return render(request, "tasks/partials/step_edit_form.html", {"step": step})
+    step.title = title
+    step.description = description
     step.save(update_fields=["title", "description"])
     return render(request, "tasks/partials/step_item.html", {"step": step})
 
@@ -271,13 +275,12 @@ def step_delete(request, pk):
 def step_create(request, task_pk):
     task = get_object_or_404(Task, pk=task_pk)
     get_project_membership(request, task.project_id)
+    title = request.POST.get("title", "").strip()
+    description = request.POST.get("description", "").strip()
+    if not title or not description:
+        return HttpResponse("")
     order = (task.steps.aggregate(Max("order"))["order__max"] or 0) + 1
-    step = Step.objects.create(
-        task=task,
-        order=order,
-        title=request.POST.get("title", "").strip(),
-        description=request.POST.get("description", "").strip(),
-    )
+    step = Step.objects.create(task=task, order=order, title=title, description=description)
     return render(request, "tasks/partials/step_item.html", {"step": step})
 
 
