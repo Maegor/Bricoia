@@ -4,7 +4,11 @@
 {% block content %}
 <div class="max-w-lg mx-auto">
   <div class="flex items-center gap-3 mb-6">
-    <a href="{% url 'project_list' %}" class="text-gray-600 hover:text-orange-500 transition-colors">&#8592;</a>
+    <a href="{% url 'project_list' %}"
+       class="flex items-center gap-1.5 font-jetbrains text-[11px] text-gray-400 hover:text-white bg-[#1a1d24] border border-[#333] hover:border-[#555] px-3 py-1.5 rounded-full transition-colors">
+      <span class="text-sm leading-none">&#8249;</span>
+      <span>Atrás</span>
+    </a>
     <h1 class="text-2xl font-bold text-white">Nuevo Proyecto</h1>
   </div>
 
@@ -34,7 +38,8 @@
 
       <div class="flex gap-3">
         <a href="{% url 'project_list' %}"
-           class="flex-1 text-center border border-[#444] text-gray-600 text-xs font-bold uppercase tracking-widest py-3 rounded-lg hover:border-[#555] hover:text-gray-400 transition-colors">
+           class="flex-1 flex items-center justify-center gap-1.5 border border-[#333] text-gray-400 text-xs font-bold uppercase tracking-widest py-3 rounded-lg hover:border-[#555] hover:text-white bg-[#1a1d24] transition-colors">
+          <span class="text-sm leading-none">&#8249;</span>
           Cancelar
         </a>
         <button type="submit"

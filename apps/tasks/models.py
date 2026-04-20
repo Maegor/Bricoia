@@ -92,6 +92,7 @@ class Step(models.Model):
 class Tool(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="tools")
     name = models.CharField(max_length=200, verbose_name="nombre")
+    available = models.BooleanField(default=False, verbose_name="disponible")
 
     class Meta:
         verbose_name = "herramienta"
@@ -106,6 +107,7 @@ class Material(models.Model):
     name = models.CharField(max_length=200, verbose_name="nombre")
     quantity = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name="cantidad")
     unit = models.CharField(max_length=50, null=True, blank=True, verbose_name="unidad")
+    available = models.BooleanField(default=False, verbose_name="disponible")
 
     class Meta:
         verbose_name = "material"

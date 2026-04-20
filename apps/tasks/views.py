@@ -372,6 +372,26 @@ def partial_material_add_button(request, task_pk):
     return render(request, "tasks/partials/material_add_button.html", {"task": task})
 
 
+@login_required
+@require_POST
+def tool_toggle_available(request, pk):
+    tool = get_object_or_404(Tool, pk=pk)
+    get_project_membership(request, tool.task.project_id)
+    tool.available = not tool.available
+    tool.save(update_fields=["available"])
+    return render(request, "tasks/partials/tool_item.html", {"tool": tool})
+
+
+@login_required
+@require_POST
+def material_toggle_available(request, pk):
+    material = get_object_or_404(Material, pk=pk)
+    get_project_membership(request, material.task.project_id)
+    material.available = not material.available
+    material.save(update_fields=["available"])
+    return render(request, "tasks/partials/material_item.html", {"material": material})
+
+
 # ── Dynamic form rows (task create/edit) ──────────────────────────────────────
 
 @login_required

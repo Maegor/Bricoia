@@ -4,7 +4,11 @@
 {% block content %}
 <div class="max-w-lg mx-auto">
   <div class="flex items-center gap-3 mb-6">
-    <a href="{% url 'project_detail' project.pk %}" class="text-gray-600 hover:text-orange-500 transition-colors">&#8592;</a>
+    <a href="{% url 'project_detail' project.pk %}"
+       class="flex items-center gap-1.5 font-jetbrains text-[11px] text-gray-400 hover:text-white bg-[#1a1d24] border border-[#333] hover:border-[#555] px-3 py-1.5 rounded-full transition-colors">
+      <span class="text-sm leading-none">&#8249;</span>
+      <span>Atrás</span>
+    </a>
     <h1 class="text-xl font-bold text-white">Miembros — {{ project.name }}</h1>
   </div>
 

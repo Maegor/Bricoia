@@ -5,7 +5,11 @@
 <!-- Header del proyecto -->
 <div class="flex items-center justify-between mb-6">
   <div class="flex items-center gap-3 min-w-0">
-    <a href="{% url 'project_list' %}" class="text-gray-600 hover:text-orange-500 flex-shrink-0 transition-colors">&#8592;</a>
+    <a href="{% url 'project_list' %}"
+       class="flex items-center gap-1.5 font-jetbrains text-[11px] text-gray-400 hover:text-white bg-[#1a1d24] border border-[#333] hover:border-[#555] px-3 py-1.5 rounded-full transition-colors flex-shrink-0">
+      <span class="text-sm leading-none">&#8249;</span>
+      <span>Atrás</span>
+    </a>
     <h1 class="text-xl font-bold text-white truncate">{{ project.name }}</h1>
   </div>
   <a href="{% url 'project_invite' project.pk %}"

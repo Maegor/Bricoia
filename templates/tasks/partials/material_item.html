@@ -1,9 +1,21 @@
 <div id="material-{{ material.pk }}"
-     class="bg-[#1c1f26] border border-[#262a33] hover:bg-[#242832] hover:border-[#363b45] rounded-lg p-2.5 cursor-pointer transition-colors flex flex-col min-h-[80px]"
+     class="relative bg-[#1c1f26] border border-[#262a33] hover:bg-[#242832] hover:border-[#363b45] rounded-lg p-2.5 cursor-pointer transition-colors flex flex-col min-h-[80px]"
      hx-get="{% url 'material_edit_form' material.pk %}"
      hx-target="#material-{{ material.pk }}"
      hx-swap="outerHTML">
-  <span class="text-[11.5px] leading-tight font-medium text-gray-300 mb-auto pb-2 line-clamp-2">{{ material.name }}</span>
+  <button type="button"
+          class="absolute top-2 right-2 w-5 h-5 rounded flex items-center justify-center transition-colors {% if material.available %}bg-green-500 border-green-500{% else %}bg-transparent border border-[#4a5060] hover:border-gray-400{% endif %}"
+          hx-post="{% url 'material_toggle_available' material.pk %}"
+          hx-target="#material-{{ material.pk }}"
+          hx-swap="outerHTML"
+          onclick="event.stopPropagation()">
+    {% if material.available %}
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-white" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+      </svg>
+    {% endif %}
+  </button>
+  <span class="text-[11.5px] leading-tight font-medium text-gray-300 mb-auto pb-2 line-clamp-2 pr-7">{{ material.name }}</span>
   <div class="flex items-baseline gap-1">
     <span class="font-jetbrains text-base font-medium text-white leading-none">{{ material.quantity|default:"—" }}</span>
     {% if material.unit %}

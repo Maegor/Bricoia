@@ -8,9 +8,9 @@
   <!-- Breadcrumb -->
   <div class="flex items-center justify-between mb-4">
     <a href="{% url 'project_detail' project.pk %}"
-       class="flex items-center gap-2 font-jetbrains text-[11px] text-gray-600 hover:text-[#ff7a3d] uppercase tracking-widest transition-colors">
-      <span class="text-lg leading-none">&#8592;</span>
-      <span class="hidden sm:inline">{{ project.name }}</span>
+       class="flex items-center gap-1.5 font-jetbrains text-[11px] text-gray-400 hover:text-white bg-[#1a1d24] border border-[#333] hover:border-[#555] px-3 py-1.5 rounded-full transition-colors">
+      <span class="text-sm leading-none">&#8249;</span>
+      <span>Atrás</span>
     </a>
   </div>
 
@@ -95,7 +95,8 @@
     <!-- Botones -->
     <div class="flex gap-2">
       <a href="{% url 'project_detail' project.pk %}"
-         class="flex-1 text-center border border-[#262a33] text-gray-600 font-jetbrains text-[11px] font-bold uppercase tracking-widest py-3 rounded-lg hover:border-[#363b45] hover:text-gray-400 transition-colors">
+         class="flex-1 flex items-center justify-center gap-1.5 border border-[#333] text-gray-400 font-jetbrains text-[11px] font-bold uppercase tracking-widest py-3 rounded-lg hover:border-[#555] hover:text-white bg-[#1a1d24] transition-colors">
+        <span class="text-sm leading-none">&#8249;</span>
         Cancelar
       </a>
       <button type="submit"
