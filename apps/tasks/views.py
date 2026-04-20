@@ -182,6 +182,33 @@ def task_status_view(request, pk):
 
 
 @login_required
+def task_meta_view(request, pk):
+    task = get_object_or_404(Task, pk=pk)
+    get_project_membership(request, task.project_id)
+    return render(request, "tasks/partials/task_meta_display.html", {"task": task})
+
+
+@login_required
+def task_meta_edit_form(request, pk):
+    task = get_object_or_404(Task, pk=pk)
+    get_project_membership(request, task.project_id)
+    return render(request, "tasks/partials/task_meta_edit.html", {"task": task})
+
+
+@login_required
+@require_POST
+def task_meta_update(request, pk):
+    task = get_object_or_404(Task, pk=pk)
+    get_project_membership(request, task.project_id)
+    difficulty = request.POST.get("difficulty", "").strip()
+    estimated_time = request.POST.get("estimated_time", "").strip()
+    task.difficulty = difficulty if difficulty in dict(Task.DIFFICULTY_CHOICES) else None
+    task.estimated_time = int(estimated_time) if estimated_time.isdigit() and int(estimated_time) > 0 else None
+    task.save(update_fields=["difficulty", "estimated_time", "updated_at"])
+    return render(request, "tasks/partials/task_meta_display.html", {"task": task})
+
+
+@login_required
 @require_POST
 def task_comment_add(request, pk):
     task = get_object_or_404(Task, pk=pk)

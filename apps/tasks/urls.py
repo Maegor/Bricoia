@@ -39,5 +39,8 @@ urlpatterns = [
     path("tasks/<int:pk>/edit/", views.task_edit_view, name="task_edit"),
     path("tasks/<int:pk>/delete/", views.task_delete_view, name="task_delete"),
     path("tasks/<int:pk>/status/", views.task_status_view, name="task_status"),
+    path("tasks/<int:pk>/meta/", views.task_meta_view, name="task_meta_view"),
+    path("tasks/<int:pk>/meta/edit/", views.task_meta_edit_form, name="task_meta_edit"),
+    path("tasks/<int:pk>/meta/update/", views.task_meta_update, name="task_meta_update"),
     path("tasks/<int:pk>/comments/add/", views.task_comment_add, name="task_comment_add"),
 ]

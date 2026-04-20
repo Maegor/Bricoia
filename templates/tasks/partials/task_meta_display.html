@@ -1,0 +1,28 @@
+{% load task_filters %}
+<div id="task-meta-{{ task.pk }}" class="flex items-center gap-2 flex-wrap">
+  <button type="button"
+          hx-get="{% url 'task_meta_edit' task.pk %}"
+          hx-target="#task-meta-{{ task.pk }}"
+          hx-swap="outerHTML"
+          class="flex items-center gap-1.5 group cursor-pointer">
+    {% if task.difficulty %}
+      <span class="font-jetbrains text-[11px] px-2.5 py-1 rounded {{ task.difficulty|difficulty_badge }} group-hover:ring-1 ring-white/20 transition-all">
+        {% if task.difficulty == 'easy' %}★{% elif task.difficulty == 'medium' %}★★{% elif task.difficulty == 'hard' %}★★★{% elif task.difficulty == 'expert' %}★★★★{% endif %}
+        {{ task.get_difficulty_display }}
+      </span>
+    {% else %}
+      <span class="font-jetbrains text-[11px] px-2.5 py-1 rounded bg-zinc-800 text-zinc-600 border border-dashed border-zinc-700 group-hover:border-zinc-500 transition-colors">
+        + Dificultad
+      </span>
+    {% endif %}
+    {% if task.estimated_time %}
+      <span class="font-jetbrains text-[11px] text-gray-500 bg-[#16181d] border border-[#262a33] rounded px-2.5 py-1 group-hover:border-[#3a3f4a] transition-colors">
+        ⏱ {{ task.estimated_time }} min
+      </span>
+    {% else %}
+      <span class="font-jetbrains text-[11px] px-2.5 py-1 rounded bg-transparent text-zinc-600 border border-dashed border-zinc-700 group-hover:border-zinc-500 transition-colors">
+        + Tiempo
+      </span>
+    {% endif %}
+  </button>
+</div>

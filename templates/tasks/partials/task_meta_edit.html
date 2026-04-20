@@ -1,0 +1,31 @@
+{% load task_filters %}
+<div id="task-meta-{{ task.pk }}">
+  <form class="flex items-center gap-2 flex-wrap"
+        hx-post="{% url 'task_meta_update' task.pk %}"
+        hx-target="#task-meta-{{ task.pk }}"
+        hx-swap="outerHTML">
+    {% csrf_token %}
+    <select name="difficulty"
+            class="font-jetbrains text-[11px] bg-[#1c1f26] border border-[#3a3f4a] rounded px-2 py-1 text-gray-300 focus:outline-none focus:border-[#ff7a3d]/50 cursor-pointer">
+      <option value="">— Dificultad —</option>
+      {% for value, label in task.DIFFICULTY_CHOICES %}
+        <option value="{{ value }}" {% if task.difficulty == value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    <input type="number" name="estimated_time" min="1"
+           value="{{ task.estimated_time|default:'' }}"
+           placeholder="min"
+           class="font-jetbrains text-[11px] bg-[#1c1f26] border border-[#3a3f4a] rounded px-2 py-1 text-gray-300 w-20 focus:outline-none focus:border-[#ff7a3d]/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+    <button type="submit"
+            class="font-jetbrains text-[11px] bg-[#ff7a3d] text-black font-bold px-3 py-1 rounded transition-colors hover:bg-orange-400">
+      ✓
+    </button>
+    <button type="button"
+            hx-get="{% url 'task_meta_view' task.pk %}"
+            hx-target="#task-meta-{{ task.pk }}"
+            hx-swap="outerHTML"
+            class="font-jetbrains text-[11px] bg-red-700 hover:bg-red-600 text-white font-bold px-3 py-1 rounded transition-colors">
+      X
+    </button>
+  </form>
+</div>

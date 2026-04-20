@@ -89,6 +89,9 @@ DB_PORT=5432
 /tasks/<pk>/edit/                   Editar tarea
 /tasks/<pk>/delete/                 Eliminar tarea (GET: confirmación, POST: borra + redirect)
 /tasks/<pk>/status/                 HTMX: cambiar estado (POST, devuelve partial)
+/tasks/<pk>/meta/                   HTMX: ver dificultad+tiempo (GET, devuelve task_meta_display.html)
+/tasks/<pk>/meta/edit/              HTMX: formulario edición dificultad+tiempo (GET)
+/tasks/<pk>/meta/update/            HTMX: guardar dificultad+tiempo (POST, devuelve task_meta_display.html)
 /tasks/<pk>/comments/add/           HTMX: añadir comentario (POST, devuelve partial comment.html)
 /ai/generate/                       HTMX: generar campos con Gemini (POST, devuelve partial)
 /tasks/partials/step-row/           HTMX: nueva fila de paso (GET)

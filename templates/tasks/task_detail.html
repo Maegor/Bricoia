@@ -36,17 +36,7 @@
       {{ task.name }}
     </h1>
     <div class="flex items-center gap-2 flex-wrap">
-      {% if task.difficulty %}
-        <span class="font-jetbrains text-[11px] px-2.5 py-1 rounded {{ task.difficulty|difficulty_badge }}">
-          {% if task.difficulty == 'easy' %}★{% elif task.difficulty == 'medium' %}★★{% elif task.difficulty == 'hard' %}★★★{% elif task.difficulty == 'expert' %}★★★★{% endif %}
-          {{ task.get_difficulty_display }}
-        </span>
-      {% endif %}
-      {% if task.estimated_time %}
-        <span class="font-jetbrains text-[11px] text-gray-500 bg-[#16181d] border border-[#262a33] rounded px-2.5 py-1">
-          ⏱ {{ task.estimated_time }} min
-        </span>
-      {% endif %}
+      {% include "tasks/partials/task_meta_display.html" with task=task %}
       {% include "tasks/partials/task_status_badge.html" with task=task %}
     </div>
   </div>
