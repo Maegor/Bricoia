@@ -115,9 +115,17 @@ def task_detail_view(request, pk):
     task = get_object_or_404(Task, pk=pk)
     get_project_membership(request, task.project_id)
     task = Task.objects.prefetch_related("steps", "tools", "materials", "comments__author").get(pk=pk)
+    tools_total = task.tools.count()
+    tools_available = task.tools.filter(available=True).count()
+    materials_total = task.materials.count()
+    materials_available = task.materials.filter(available=True).count()
     return render(request, "tasks/task_detail.html", {
         "task": task,
         "comment_form": CommentForm(),
+        "tools_total": tools_total,
+        "tools_available": tools_available,
+        "materials_total": materials_total,
+        "materials_available": materials_available,
     })
 
 
@@ -409,7 +417,9 @@ def tool_toggle_available(request, pk):
     get_project_membership(request, tool.task.project_id)
     tool.available = not tool.available
     tool.save(update_fields=["available"])
-    return render(request, "tasks/partials/tool_item.html", {"tool": tool})
+    response = render(request, "tasks/partials/tool_item.html", {"tool": tool})
+    response["HX-Trigger"] = "toolsUpdated"
+    return response
 
 
 @login_required
@@ -419,7 +429,31 @@ def material_toggle_available(request, pk):
     get_project_membership(request, material.task.project_id)
     material.available = not material.available
     material.save(update_fields=["available"])
-    return render(request, "tasks/partials/material_item.html", {"material": material})
+    response = render(request, "tasks/partials/material_item.html", {"material": material})
+    response["HX-Trigger"] = "materialsUpdated"
+    return response
+
+
+@login_required
+def task_tools_progress(request, pk):
+    task = get_object_or_404(Task, pk=pk)
+    get_project_membership(request, task.project_id)
+    total = task.tools.count()
+    available = task.tools.filter(available=True).count()
+    return render(request, "tasks/partials/tools_progress.html", {
+        "task": task, "total": total, "available": available,
+    })
+
+
+@login_required
+def task_materials_progress(request, pk):
+    task = get_object_or_404(Task, pk=pk)
+    get_project_membership(request, task.project_id)
+    total = task.materials.count()
+    available = task.materials.filter(available=True).count()
+    return render(request, "tasks/partials/materials_progress.html", {
+        "task": task, "total": total, "available": available,
+    })
 
 
 # ── Dynamic form rows (task create/edit) ──────────────────────────────────────

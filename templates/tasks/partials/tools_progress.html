@@ -1,0 +1,14 @@
+<div id="tools-progress-{{ task.pk }}"
+     hx-get="{% url 'task_tools_progress' task.pk %}"
+     hx-trigger="toolsUpdated from:body"
+     hx-swap="outerHTML">
+  {% if total > 0 %}
+    <div class="flex items-center gap-2 mt-2">
+      <div class="flex-1 bg-[#262a33] rounded-full h-1.5 overflow-hidden">
+        <div class="bg-green-500 h-1.5 rounded-full transition-all duration-300"
+             style="width: {% widthratio available total 100 %}%"></div>
+      </div>
+      <span class="font-jetbrains text-[10px] text-gray-600 flex-shrink-0">{{ available }}/{{ total }}</span>
+    </div>
+  {% endif %}
+</div>

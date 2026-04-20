@@ -22,6 +22,7 @@ urlpatterns = [
     path("tasks/tools/<int:pk>/delete/", views.tool_delete, name="tool_delete"),
     path("tasks/tools/<int:pk>/toggle-available/", views.tool_toggle_available, name="tool_toggle_available"),
     path("tasks/<int:task_pk>/tools/add/", views.tool_create, name="tool_create"),
+    path("tasks/<int:pk>/tools/progress/", views.task_tools_progress, name="task_tools_progress"),
 
     # Inline CRUD: Materials
     path("tasks/materials/<int:pk>/", views.material_view, name="material_view"),
@@ -30,6 +31,7 @@ urlpatterns = [
     path("tasks/materials/<int:pk>/delete/", views.material_delete, name="material_delete"),
     path("tasks/materials/<int:pk>/toggle-available/", views.material_toggle_available, name="material_toggle_available"),
     path("tasks/<int:task_pk>/materials/add/", views.material_create, name="material_create"),
+    path("tasks/<int:pk>/materials/progress/", views.task_materials_progress, name="task_materials_progress"),
     path("tasks/<int:task_pk>/materials/add-form/", views.partial_material_add_form, name="partial_material_add_form"),
     path("tasks/<int:task_pk>/materials/add-button/", views.partial_material_add_button, name="partial_material_add_button"),
 
