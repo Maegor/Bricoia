@@ -1,0 +1,8 @@
+<div id="materials-add-area" class="px-3 pb-3">
+  <button hx-get="{% url 'partial_material_add_form' task.pk %}"
+          hx-target="#materials-add-area"
+          hx-swap="outerHTML"
+          class="w-full flex items-center justify-center gap-2 py-3 border border-dashed border-[rgba(255,122,61,0.4)] rounded-lg font-jetbrains text-[11px] font-semibold text-[#ff7a3d] hover:bg-[#ff7a3d]/5 transition-colors uppercase tracking-widest">
+    + Añadir material
+  </button>
+</div>

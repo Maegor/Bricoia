@@ -1,0 +1,39 @@
+<div id="material-{{ material.pk }}" class="col-span-3">
+  <form hx-post="{% url 'material_update' material.pk %}"
+        hx-target="#material-{{ material.pk }}"
+        hx-swap="outerHTML"
+        class="bg-[#ff7a3d]/10 border border-[#ff7a3d]/30 rounded-lg p-2.5 flex flex-col gap-2">
+    <input type="text" name="name" value="{{ material.name }}"
+           placeholder="Material"
+           class="w-full bg-[#1c1f26] border border-[#262a33] rounded-lg px-3 py-2 text-sm text-white placeholder-gray-700 focus:outline-none focus:border-[#ff7a3d]/50">
+    <div class="flex gap-2">
+      <input type="text" name="quantity" value="{{ material.quantity|default:'' }}"
+             placeholder="Cant."
+             class="flex-1 bg-[#1c1f26] border border-[#262a33] rounded-lg px-3 py-2 text-sm font-jetbrains text-white placeholder-gray-700 focus:outline-none focus:border-[#ff7a3d]/50">
+      <input type="text" name="unit" value="{{ material.unit|default:'' }}"
+             placeholder="Ud."
+             class="flex-1 bg-[#1c1f26] border border-[#262a33] rounded-lg px-3 py-2 text-sm font-jetbrains text-white placeholder-gray-700 focus:outline-none focus:border-[#ff7a3d]/50">
+    </div>
+    <div class="flex items-center gap-2 pt-0.5">
+      <button type="button"
+              class="font-jetbrains text-[11px] border border-[#262a33] text-red-700 hover:text-red-500 px-3 py-1.5 rounded-lg transition-colors uppercase tracking-widest"
+              hx-post="{% url 'material_delete' material.pk %}"
+              hx-target="#material-{{ material.pk }}"
+              hx-swap="outerHTML">
+        Borrar
+      </button>
+      <div class="flex-1"></div>
+      <button type="button"
+              class="font-jetbrains text-[11px] border border-[#262a33] text-gray-500 hover:text-gray-300 px-3 py-1.5 rounded-lg transition-colors uppercase tracking-widest"
+              hx-get="{% url 'material_view' material.pk %}"
+              hx-target="#material-{{ material.pk }}"
+              hx-swap="outerHTML">
+        Cancelar
+      </button>
+      <button type="submit"
+              class="font-jetbrains text-[11px] bg-[#ff7a3d] text-black font-bold px-3 py-1.5 rounded-lg transition-colors uppercase tracking-widest hover:bg-orange-400">
+        Guardar
+      </button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,29 @@
+<div id="materials-add-area" class="px-3 pb-3">
+  <form hx-post="{% url 'material_create' task.pk %}"
+        hx-target="#materials-grid"
+        hx-swap="beforeend"
+        class="bg-[#ff7a3d]/10 border border-[#ff7a3d]/30 rounded-lg p-2.5 flex flex-col gap-2">
+    <input type="text" name="name" placeholder="Material"
+           autofocus
+           class="w-full bg-[#1c1f26] border border-[#262a33] rounded-lg px-3 py-2 text-sm text-white placeholder-gray-700 focus:outline-none focus:border-[#ff7a3d]/50">
+    <div class="flex gap-2">
+      <input type="text" name="quantity" placeholder="Cant."
+             class="flex-1 bg-[#1c1f26] border border-[#262a33] rounded-lg px-3 py-2 text-sm font-jetbrains text-white placeholder-gray-700 focus:outline-none focus:border-[#ff7a3d]/50">
+      <input type="text" name="unit" placeholder="Ud."
+             class="flex-1 bg-[#1c1f26] border border-[#262a33] rounded-lg px-3 py-2 text-sm font-jetbrains text-white placeholder-gray-700 focus:outline-none focus:border-[#ff7a3d]/50">
+    </div>
+    <div class="flex items-center justify-end gap-2 pt-0.5">
+      <button type="button"
+              class="font-jetbrains text-[11px] border border-[#262a33] text-gray-500 hover:text-gray-300 px-3 py-1.5 rounded-lg transition-colors uppercase tracking-widest"
+              hx-get="{% url 'partial_material_add_button' task.pk %}"
+              hx-target="#materials-add-area"
+              hx-swap="outerHTML">
+        Cancelar
+      </button>
+      <button type="submit"
+              class="font-jetbrains text-[11px] bg-[#ff7a3d] text-black font-bold px-3 py-1.5 rounded-lg transition-colors uppercase tracking-widest hover:bg-orange-400">
+        Añadir
+      </button>
+    </div>
+  </form>
+</div>

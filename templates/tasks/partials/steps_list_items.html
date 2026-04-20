@@ -1,0 +1,5 @@
+{% for step in steps %}
+  {% include "tasks/partials/step_item.html" with step=step %}
+{% empty %}
+  <p class="px-4 py-4 font-jetbrains text-[11px] text-gray-700">Aún no hay pasos.</p>
+{% endfor %}

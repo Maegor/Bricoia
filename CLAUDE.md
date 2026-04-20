@@ -94,6 +94,21 @@ DB_PORT=5432
 /tasks/partials/step-row/           HTMX: nueva fila de paso (GET)
 /tasks/partials/tool-row/           HTMX: nueva fila de herramienta (GET)
 /tasks/partials/material-row/       HTMX: nueva fila de material (GET)
+/tasks/steps/<pk>/                  HTMX: ver paso (GET, devuelve step_item.html)
+/tasks/steps/<pk>/edit/             HTMX: formulario edición paso (GET, devuelve step_edit_form.html)
+/tasks/steps/<pk>/update/           HTMX: guardar paso (POST, devuelve step_item.html)
+/tasks/steps/<pk>/delete/           HTMX: borrar paso (POST, devuelve vacío)
+/tasks/<pk>/steps/add/              HTMX: crear paso (POST, devuelve step_item.html)
+/tasks/tools/<pk>/                  HTMX: ver herramienta (GET, devuelve tool_item.html)
+/tasks/tools/<pk>/edit/             HTMX: formulario edición herramienta (GET)
+/tasks/tools/<pk>/update/           HTMX: guardar herramienta (POST)
+/tasks/tools/<pk>/delete/           HTMX: borrar herramienta (POST)
+/tasks/<pk>/tools/add/              HTMX: crear herramienta (POST)
+/tasks/materials/<pk>/              HTMX: ver material (GET, devuelve material_item.html)
+/tasks/materials/<pk>/edit/         HTMX: formulario edición material (GET)
+/tasks/materials/<pk>/update/       HTMX: guardar material (POST)
+/tasks/materials/<pk>/delete/       HTMX: borrar material (POST)
+/tasks/<pk>/materials/add/          HTMX: crear material (POST)
 ```
 
 ### Integración Gemini

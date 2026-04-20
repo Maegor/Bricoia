@@ -3,99 +3,103 @@
 {% block title %}{% if task %}Editar tarea{% else %}Nueva tarea{% endif %} — Bricoia{% endblock %}
 
 {% block content %}
-<div class="max-w-3xl mx-auto">
+<div class="max-w-[480px] mx-auto">
 
-  <div class="flex items-center gap-2 mb-2">
-    <a href="{% url 'project_detail' project.pk %}" class="text-gray-600 hover:text-orange-500 transition-colors">&#8592;</a>
-    <span class="text-xs text-orange-500 uppercase tracking-widest">{{ project.name }}</span>
+  <!-- Breadcrumb -->
+  <div class="flex items-center justify-between mb-4">
+    <a href="{% url 'project_detail' project.pk %}"
+       class="flex items-center gap-2 font-jetbrains text-[11px] text-gray-600 hover:text-[#ff7a3d] uppercase tracking-widest transition-colors">
+      <span class="text-lg leading-none">&#8592;</span>
+      <span class="hidden sm:inline">{{ project.name }}</span>
+    </a>
   </div>
 
-  <h1 class="font-display text-5xl text-white mb-1">
-    {% if task %}Editar Tarea{% else %}Nueva Tarea de Taller{% endif %}
-  </h1>
-  <p class="text-sm text-orange-500/70 mb-8">
-    {% if task %}Modifica los parámetros de esta tarea.
-    {% else %}Define los parámetros de tu próximo proyecto de construcción o restauración.
-    {% endif %}
-  </p>
+  <!-- Título -->
+  <div class="mb-4">
+    <h1 class="font-display text-4xl text-white tracking-wider uppercase leading-none">
+      {% if task %}Editar Tarea{% else %}Nueva Tarea{% endif %}
+    </h1>
+  </div>
 
   <form method="post" id="task-form" novalidate>
     {% csrf_token %}
     <input type="hidden" name="ai_generated" id="ai_generated_flag" value="0">
 
     <!-- Datos básicos -->
-    <div class="bg-[#242424] rounded-xl border border-[#333] p-6 mb-5">
-      <h2 class="text-xs font-semibold text-gray-600 uppercase tracking-widest mb-5">Datos básicos</h2>
-
-      <div class="mb-5">
-        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">
-         Nombre de la tarea <span class="text-orange-500">*</span>
-        </label>
-        {{ form.name }}
-        {% for error in form.name.errors %}<p class="text-red-400 text-xs mt-1">{{ error }}</p>{% endfor %}
+    <div class="bg-[#16181d] border border-[#262a33] rounded-xl overflow-hidden mb-3">
+      <div class="px-4 py-3">
+        <h2 class="font-jetbrains text-[11px] font-semibold tracking-[0.18em] uppercase text-[#ff7a3d]">Datos básicos</h2>
       </div>
-
-      <div class="mb-5">
-        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">
-          Descripción detallada <span class="text-orange-500">*</span>
-        </label>
-        {{ form.description }}
-        {% for error in form.description.errors %}<p class="text-red-400 text-xs mt-1">{{ error }}</p>{% endfor %}
-      </div>
-
-      <div>
-        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Estado</label>
-        {{ form.status }}
+      <div class="h-px bg-[#262a33]"></div>
+      <div class="px-4 py-4 space-y-3">
+        <div>
+          <label class="block font-jetbrains text-[10px] font-semibold text-gray-600 uppercase tracking-widest mb-1.5">
+            Nombre <span class="text-[#ff7a3d]">*</span>
+          </label>
+          {{ form.name }}
+          {% for error in form.name.errors %}<p class="text-red-400 text-xs mt-1">{{ error }}</p>{% endfor %}
+        </div>
+        <div>
+          <label class="block font-jetbrains text-[10px] font-semibold text-gray-600 uppercase tracking-widest mb-1.5">
+            Descripción <span class="text-[#ff7a3d]">*</span>
+          </label>
+          {{ form.description }}
+          {% for error in form.description.errors %}<p class="text-red-400 text-xs mt-1">{{ error }}</p>{% endfor %}
+        </div>
+        <div>
+          <label class="block font-jetbrains text-[10px] font-semibold text-gray-600 uppercase tracking-widest mb-1.5">Estado</label>
+          {{ form.status }}
+        </div>
       </div>
     </div>
 
     {% if show_ai_assistant %}
       <!-- Asistente IA -->
-      <div class="bg-[#242424] border border-orange-500/30 rounded-xl p-6 mb-5">
-        <div class="flex items-center gap-2 mb-2">
-          <span class="text-orange-500 text-base">✦</span>
-          <h2 class="text-sm font-bold text-white">Asistente de Planificación (IA)</h2>
+      <div class="bg-[#16181d] border border-[#ff7a3d]/30 rounded-xl overflow-hidden mb-3">
+        <div class="px-4 py-3 flex items-center gap-2">
+          <span class="text-[#ff7a3d]">✦</span>
+          <h2 class="font-jetbrains text-[11px] font-semibold tracking-[0.18em] uppercase text-[#ff7a3d]">Asistente IA</h2>
         </div>
-        <p class="text-xs text-gray-600 mb-4">
-          Deja que la inteligencia artificial de <span class="text-orange-500 font-semibold">BRICO</span> analice tu proyecto.
-          Generaremos una lista de materiales, pasos lógicos y precauciones de seguridad basadas en estándares industriales.
-        </p>
-
-        <div id="ai-generator">
-          <div class="relative mb-3">
-            <textarea id="ai-prompt" name="prompt" maxlength="500" rows="3"
-                      class="w-full bg-[#1a1a1a] border border-[#444] text-white rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 placeholder-gray-700 resize-none"
-                      placeholder="General los pasos para restaurar una silla de taller…"></textarea>
-            <button id="ai-generate-btn" type="button"
-                    hx-post="{% url 'ai_generate' %}"
-                    hx-target="#ai-fields"
-                    hx-swap="innerHTML"
-                    hx-trigger="click"
-                    hx-include="#ai-prompt"
-                    hx-indicator="#ai-spinner"
-                    class="absolute bottom-3 right-3 text-orange-500 hover:text-orange-400 transition-colors text-xl leading-none"
-                    title="Generar con IA">
-              ✦
-            </button>
+        <div class="h-px bg-[#ff7a3d]/20"></div>
+        <div class="px-4 py-4">
+          <p class="font-jetbrains text-[11px] text-gray-600 mb-3">
+            Describe tu tarea y <span class="text-[#ff7a3d]">BRICO</span> generará pasos, materiales y herramientas.
+          </p>
+          <div id="ai-generator">
+            <div class="relative mb-2">
+              <textarea id="ai-prompt" name="prompt" maxlength="500" rows="3"
+                        class="w-full bg-[#1c1f26] border border-[#262a33] text-white rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#ff7a3d]/50 placeholder-gray-700 resize-none"
+                        placeholder="Genera los pasos para restaurar una silla de taller…"></textarea>
+              <button id="ai-generate-btn" type="button"
+                      hx-post="{% url 'ai_generate' %}"
+                      hx-target="#ai-fields"
+                      hx-swap="innerHTML"
+                      hx-trigger="click"
+                      hx-include="#ai-prompt"
+                      hx-indicator="#ai-spinner"
+                      class="absolute bottom-3 right-3 text-[#ff7a3d] hover:text-orange-400 transition-colors text-xl leading-none"
+                      title="Generar con IA">
+                ✦
+              </button>
+            </div>
+            <span id="ai-spinner" class="htmx-indicator font-jetbrains text-[11px] text-[#ff7a3d] uppercase tracking-widest">⏳ Generando…</span>
           </div>
-          <span id="ai-spinner" class="htmx-indicator text-xs text-orange-500 uppercase tracking-widest">⏳ Generando…</span>
         </div>
       </div>
     {% endif %}
 
-    <!-- Detalles (IA o manual) -->
-    <div class="bg-[#242424] rounded-xl border border-[#333] p-6 mb-5" id="ai-fields">
+    <div id="ai-fields">
       {% include "tasks/partials/ai_detail_fields.html" with form=form steps=steps tools=tools materials=materials %}
     </div>
 
     <!-- Botones -->
-    <div class="flex gap-3">
+    <div class="flex gap-2">
       <a href="{% url 'project_detail' project.pk %}"
-         class="flex-1 text-center border border-[#444] text-gray-600 text-xs font-bold uppercase tracking-widest py-3 rounded-lg hover:border-[#555] hover:text-gray-400 transition-colors">
+         class="flex-1 text-center border border-[#262a33] text-gray-600 font-jetbrains text-[11px] font-bold uppercase tracking-widest py-3 rounded-lg hover:border-[#363b45] hover:text-gray-400 transition-colors">
         Cancelar
       </a>
       <button type="submit"
-              class="flex-1 bg-orange-500 hover:bg-orange-400 text-black font-bold uppercase tracking-widest py-3 rounded-lg border-2 border-dashed border-orange-300/50 transition-colors flex items-center justify-center gap-2">
+              class="flex-1 bg-[#ff7a3d] hover:bg-orange-400 text-black font-jetbrains font-bold text-[11px] uppercase tracking-widest py-3 rounded-lg transition-colors flex items-center justify-center gap-2">
         {% if task %}GUARDAR CAMBIOS{% else %}CREAR TAREA{% endif %} →
       </button>
     </div>

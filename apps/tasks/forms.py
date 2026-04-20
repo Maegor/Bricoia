@@ -3,12 +3,12 @@ from django import forms
 from .models import Comment, Material, Step, Task, Tool
 
 _INPUT_CLASS = (
-    "w-full bg-[#2e2e2e] border border-[#444] text-white rounded-lg px-3 py-2 "
-    "text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 placeholder-gray-600"
+    "w-full bg-[#1c1f26] border border-[#262a33] text-white rounded-lg px-3 py-2 "
+    "text-sm focus:outline-none focus:border-[#ff7a3d]/50 placeholder-gray-700"
 )
 _SELECT_CLASS = (
-    "w-full bg-[#2e2e2e] border border-[#444] text-white rounded-lg px-3 py-2 "
-    "text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+    "w-full bg-[#1c1f26] border border-[#262a33] text-white rounded-lg px-3 py-2 "
+    "text-sm focus:outline-none focus:border-[#ff7a3d]/50"
 )
 
 
@@ -73,8 +73,8 @@ class MaterialForm(forms.ModelForm):
             "name": forms.TextInput(attrs={"class": _INPUT_CLASS, "placeholder": "Material"}),
             "quantity": forms.NumberInput(attrs={
                 "class": (
-                    "w-full bg-[#2e2e2e] border border-[#444] text-white rounded-lg px-2 py-2 "
-                    "text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    "w-full bg-[#1c1f26] border border-[#262a33] text-white rounded-lg px-2 py-2 "
+                    "text-sm focus:outline-none focus:border-[#ff7a3d]/50"
                 ),
                 "placeholder": "Cant.",
                 "step": "0.01",
@@ -82,8 +82,8 @@ class MaterialForm(forms.ModelForm):
             }),
             "unit": forms.TextInput(attrs={
                 "class": (
-                    "w-full bg-[#2e2e2e] border border-[#444] text-white rounded-lg px-2 py-2 "
-                    "text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    "w-full bg-[#1c1f26] border border-[#262a33] text-white rounded-lg px-2 py-2 "
+                    "text-sm focus:outline-none focus:border-[#ff7a3d]/50"
                 ),
                 "placeholder": "Unidad",
             }),

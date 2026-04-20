@@ -1,7 +1,9 @@
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+from django.db.models import Max
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
 from django.views.decorators.http import require_POST
 
 from apps.projects.utils import get_project_membership
@@ -193,6 +195,184 @@ def task_comment_add(request, pk):
         return render(request, "tasks/partials/comment.html", {"comment": comment})
     return render(request, "tasks/partials/comment.html", {"comment": None, "error": True})
 
+
+# ── Inline CRUD: Steps ────────────────────────────────────────────────────────
+
+@login_required
+def step_view(request, pk):
+    step = get_object_or_404(Step, pk=pk)
+    get_project_membership(request, step.task.project_id)
+    return render(request, "tasks/partials/step_item.html", {"step": step})
+
+
+@login_required
+def step_edit_form(request, pk):
+    step = get_object_or_404(Step, pk=pk)
+    get_project_membership(request, step.task.project_id)
+    return render(request, "tasks/partials/step_edit_form.html", {"step": step})
+
+
+@login_required
+@require_POST
+def step_update(request, pk):
+    step = get_object_or_404(Step, pk=pk)
+    get_project_membership(request, step.task.project_id)
+    step.title = request.POST.get("title", "").strip()
+    step.description = request.POST.get("description", "").strip()
+    step.save(update_fields=["title", "description"])
+    return render(request, "tasks/partials/step_item.html", {"step": step})
+
+
+@login_required
+@require_POST
+def step_delete(request, pk):
+    step = get_object_or_404(Step, pk=pk)
+    task = step.task
+    get_project_membership(request, task.project_id)
+    step.delete()
+    for i, s in enumerate(task.steps.order_by("order"), start=1):
+        if s.order != i:
+            s.order = i
+            s.save(update_fields=["order"])
+    return render(request, "tasks/partials/steps_list_items.html", {
+        "steps": task.steps.order_by("order"),
+    })
+
+
+@login_required
+@require_POST
+def step_create(request, task_pk):
+    task = get_object_or_404(Task, pk=task_pk)
+    get_project_membership(request, task.project_id)
+    order = (task.steps.aggregate(Max("order"))["order__max"] or 0) + 1
+    step = Step.objects.create(
+        task=task,
+        order=order,
+        title=request.POST.get("title", "").strip(),
+        description=request.POST.get("description", "").strip(),
+    )
+    return render(request, "tasks/partials/step_item.html", {"step": step})
+
+
+# ── Inline CRUD: Tools ────────────────────────────────────────────────────────
+
+@login_required
+def tool_view(request, pk):
+    tool = get_object_or_404(Tool, pk=pk)
+    get_project_membership(request, tool.task.project_id)
+    return render(request, "tasks/partials/tool_item.html", {"tool": tool})
+
+
+@login_required
+def tool_edit_form(request, pk):
+    tool = get_object_or_404(Tool, pk=pk)
+    get_project_membership(request, tool.task.project_id)
+    return render(request, "tasks/partials/tool_edit_form.html", {"tool": tool})
+
+
+@login_required
+@require_POST
+def tool_update(request, pk):
+    tool = get_object_or_404(Tool, pk=pk)
+    get_project_membership(request, tool.task.project_id)
+    tool.name = request.POST.get("name", "").strip()
+    tool.save(update_fields=["name"])
+    return render(request, "tasks/partials/tool_item.html", {"tool": tool})
+
+
+@login_required
+@require_POST
+def tool_delete(request, pk):
+    tool = get_object_or_404(Tool, pk=pk)
+    get_project_membership(request, tool.task.project_id)
+    tool.delete()
+    return HttpResponse("")
+
+
+@login_required
+@require_POST
+def tool_create(request, task_pk):
+    task = get_object_or_404(Task, pk=task_pk)
+    get_project_membership(request, task.project_id)
+    name = request.POST.get("name", "").strip()
+    if not name:
+        return HttpResponse("")
+    tool = Tool.objects.create(task=task, name=name)
+    return render(request, "tasks/partials/tool_item.html", {"tool": tool})
+
+
+# ── Inline CRUD: Materials ────────────────────────────────────────────────────
+
+@login_required
+def material_view(request, pk):
+    material = get_object_or_404(Material, pk=pk)
+    get_project_membership(request, material.task.project_id)
+    return render(request, "tasks/partials/material_item.html", {"material": material})
+
+
+@login_required
+def material_edit_form(request, pk):
+    material = get_object_or_404(Material, pk=pk)
+    get_project_membership(request, material.task.project_id)
+    return render(request, "tasks/partials/material_edit_form.html", {"material": material})
+
+
+@login_required
+@require_POST
+def material_update(request, pk):
+    material = get_object_or_404(Material, pk=pk)
+    get_project_membership(request, material.task.project_id)
+    material.name = request.POST.get("name", "").strip()
+    material.quantity = request.POST.get("quantity", "").strip() or None
+    material.unit = request.POST.get("unit", "").strip() or None
+    material.save(update_fields=["name", "quantity", "unit"])
+    return render(request, "tasks/partials/material_item.html", {"material": material})
+
+
+@login_required
+@require_POST
+def material_delete(request, pk):
+    material = get_object_or_404(Material, pk=pk)
+    get_project_membership(request, material.task.project_id)
+    material.delete()
+    return HttpResponse("")
+
+
+@login_required
+@require_POST
+def material_create(request, task_pk):
+    task = get_object_or_404(Task, pk=task_pk)
+    get_project_membership(request, task.project_id)
+    name = request.POST.get("name", "").strip()
+    if not name:
+        return HttpResponse("")
+    material = Material.objects.create(
+        task=task,
+        name=name,
+        quantity=request.POST.get("quantity", "").strip() or None,
+        unit=request.POST.get("unit", "").strip() or None,
+    )
+    tile = render_to_string("tasks/partials/material_item.html", {"material": material}, request=request)
+    add_btn = render_to_string("tasks/partials/material_add_button.html", {"task": task}, request=request)
+    oob = add_btn.replace('id="materials-add-area"', 'id="materials-add-area" hx-swap-oob="true"', 1)
+    return HttpResponse(tile + oob)
+
+
+@login_required
+def partial_material_add_form(request, task_pk):
+    task = get_object_or_404(Task, pk=task_pk)
+    get_project_membership(request, task.project_id)
+    return render(request, "tasks/partials/material_add_form_inline.html", {"task": task})
+
+
+@login_required
+def partial_material_add_button(request, task_pk):
+    task = get_object_or_404(Task, pk=task_pk)
+    get_project_membership(request, task.project_id)
+    return render(request, "tasks/partials/material_add_button.html", {"task": task})
+
+
+# ── Dynamic form rows (task create/edit) ──────────────────────────────────────
 
 @login_required
 def partial_step_row(request):

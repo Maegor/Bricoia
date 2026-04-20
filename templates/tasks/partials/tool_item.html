@@ -1,0 +1,17 @@
+<div id="tool-{{ tool.pk }}"
+     class="bg-[#1c1f26] border border-[#262a33] hover:bg-[#242832] hover:border-[#363b45] rounded-lg p-2.5 cursor-pointer transition-colors flex flex-col min-h-[60px]"
+     hx-on:click="const p=this.querySelector('.tool-actions'),wasHidden=p.classList.contains('hidden');document.querySelectorAll('.step-actions,.tool-actions').forEach(el=>el.classList.add('hidden'));if(wasHidden)p.classList.remove('hidden')">
+  <span class="text-[12px] font-medium text-gray-300 leading-snug flex-1">{{ tool.name }}</span>
+  <div class="tool-actions hidden flex gap-2 mt-2 pt-1.5 border-t border-[#262a33]">
+    <button class="font-jetbrains text-[10px] text-[#ff7a3d] hover:text-orange-400 transition-colors uppercase tracking-widest"
+            hx-get="{% url 'tool_edit_form' tool.pk %}"
+            hx-target="#tool-{{ tool.pk }}"
+            hx-swap="outerHTML"
+            hx-on:click="event.stopPropagation()">Editar</button>
+    <button class="font-jetbrains text-[10px] text-red-700 hover:text-red-500 transition-colors uppercase tracking-widest"
+            hx-post="{% url 'tool_delete' tool.pk %}"
+            hx-target="#tool-{{ tool.pk }}"
+            hx-swap="outerHTML"
+            hx-on:click="event.stopPropagation()">Borrar</button>
+  </div>
+</div>

@@ -1,0 +1,13 @@
+<div id="material-{{ material.pk }}"
+     class="bg-[#1c1f26] border border-[#262a33] hover:bg-[#242832] hover:border-[#363b45] rounded-lg p-2.5 cursor-pointer transition-colors flex flex-col min-h-[80px]"
+     hx-get="{% url 'material_edit_form' material.pk %}"
+     hx-target="#material-{{ material.pk }}"
+     hx-swap="outerHTML">
+  <span class="text-[11.5px] leading-tight font-medium text-gray-300 mb-auto pb-2 line-clamp-2">{{ material.name }}</span>
+  <div class="flex items-baseline gap-1">
+    <span class="font-jetbrains text-base font-medium text-white leading-none">{{ material.quantity|default:"—" }}</span>
+    {% if material.unit %}
+      <span class="font-jetbrains text-[10px] text-gray-600">{{ material.unit }}</span>
+    {% endif %}
+  </div>
+</div>
