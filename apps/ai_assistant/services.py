@@ -40,7 +40,7 @@ def generate_task_fields(prompt: str) -> dict:
     if not settings.GEMINI_API_KEY:
         raise AIGenerationError("GEMINI_API_KEY no está configurada.")
 
-    logger.info("Gemini request | model=gemini-2.0-flash | prompt_len=%d", len(prompt))
+    logger.info("Gemini request | model=gemini-2.5-flash | prompt_len=%d", len(prompt))
     try:
         client = genai.Client(api_key=settings.GEMINI_API_KEY)
         response = client.models.generate_content(
@@ -74,3 +74,59 @@ def generate_task_fields(prompt: str) -> dict:
         "tools": data.get("tools", []),
         "materials": data.get("materials", []),
     }
+
+
+_CHAT_SYSTEM_PROMPT = """Eres un asistente experto en bricolaje. \
+Se te proporciona el contexto completo de una tarea de bricolaje. \
+Responde ÚNICAMENTE preguntas relacionadas con esa tarea específica. \
+Si el usuario pregunta sobre algo ajeno a la tarea, responde educadamente \
+que solo puedes resolver dudas sobre esta tarea concreta. \
+Responde en el mismo idioma que el usuario. \
+Sé conciso y práctico."""
+
+
+def chat_about_task(prompt: str, task) -> str:
+    """
+    Answer a user question about a specific task using Gemini.
+
+    Raises:
+        AIGenerationError: on API failure.
+    """
+    if not settings.GEMINI_API_KEY:
+        raise AIGenerationError("GEMINI_API_KEY no está configurada.")
+
+    steps_text = "\n".join(
+        f"  {s.order}. {s.title}: {s.description}" for s in task.steps.all()
+    ) or "  (sin pasos definidos)"
+    tools_text = ", ".join(t.name for t in task.tools.all()) or "(sin herramientas)"
+    materials_text = ", ".join(
+        m.name + (f" {m.quantity} {m.unit}" if m.quantity else "")
+        for m in task.materials.all()
+    ) or "(sin materiales)"
+
+    context = (
+        f"TAREA: {task.name}\n"
+        f"DESCRIPCIÓN: {task.description or '(sin descripción)'}\n"
+        f"HERRAMIENTAS: {tools_text}\n"
+        f"MATERIALES: {materials_text}\n"
+        f"PASOS:\n{steps_text}"
+    )
+    contents = f"Contexto de la tarea:\n{context}\n\nPregunta del usuario:\n{prompt}"
+
+    logger.info("Gemini chat | model=gemini-2.5-flash | task_id=%s | prompt_len=%d", task.pk, len(prompt))
+    try:
+        client = genai.Client(api_key=settings.GEMINI_API_KEY)
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=contents,
+            config=types.GenerateContentConfig(
+                system_instruction=_CHAT_SYSTEM_PROMPT,
+            ),
+        )
+        answer = (response.text or "").strip()
+    except Exception as exc:
+        logger.error("Gemini chat error: %s", exc)
+        raise AIGenerationError(f"Error al llamar a la API de Gemini: {exc}") from exc
+
+    logger.info("Gemini chat OK | task_id=%s | response_len=%d", task.pk, len(answer))
+    return answer

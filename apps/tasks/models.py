@@ -140,6 +140,22 @@ class Comment(models.Model):
         return f"{self.author.username} en tarea {self.task_id}"
 
 
+class AIChat(models.Model):
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="ai_chats")
+    prompt = models.TextField(verbose_name="pregunta")
+    response = models.TextField(verbose_name="respuesta")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "chat IA"
+        verbose_name_plural = "chats IA"
+        ordering = ["created_at"]
+        indexes = [models.Index(fields=["task", "created_at"])]
+
+    def __str__(self):
+        return f"Chat IA en tarea {self.task_id}"
+
+
 class TaskLink(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="links")
     url = models.URLField(max_length=500, verbose_name="URL")

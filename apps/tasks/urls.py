@@ -45,6 +45,7 @@ urlpatterns = [
     path("tasks/<int:pk>/meta/edit/", views.task_meta_edit_form, name="task_meta_edit"),
     path("tasks/<int:pk>/meta/update/", views.task_meta_update, name="task_meta_update"),
     path("tasks/<int:pk>/comments/add/", views.task_comment_add, name="task_comment_add"),
+    path("tasks/<int:pk>/ai-chat/", views.task_ai_chat, name="task_ai_chat"),
     path("tasks/<int:task_pk>/links/add/", views.link_create, name="link_create"),
     path("tasks/links/<int:pk>/delete/", views.link_delete, name="link_delete"),
 ]

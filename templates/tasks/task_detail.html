@@ -124,6 +124,36 @@
     </div>
   </div>
 
+  <!-- Asistente IA -->
+  <div class="bg-[#16181d] border border-[#262a33] rounded-xl overflow-hidden mb-3">
+    <div class="px-4 py-3">
+      <h2 class="font-jetbrains text-[11px] font-semibold tracking-[0.18em] uppercase text-[#ff7a3d]">✦ Asistente IA</h2>
+    </div>
+    <div class="h-px bg-[#262a33]"></div>
+    <div id="ai-chat-list" class="px-4 divide-y divide-[#1c1f26]">
+      {% for ai_chat in ai_chats %}
+        {% include "tasks/partials/ai_chat_item.html" with ai_chat=ai_chat %}
+      {% empty %}
+        <p id="ai-chat-empty" class="font-jetbrains text-[11px] text-gray-700 py-4">Aún no hay preguntas. Usa el formulario para resolver dudas sobre esta tarea.</p>
+      {% endfor %}
+    </div>
+    <div class="h-px bg-[#262a33]"></div>
+    <div class="px-4 py-3">
+      <form hx-post="{% url 'task_ai_chat' task.pk %}"
+            hx-target="#ai-chat-list"
+            hx-swap="beforeend"
+            hx-on::after-request="this.reset()">
+        <textarea name="prompt" rows="2" required
+                  placeholder="Pregunta algo sobre esta tarea..."
+                  class="w-full bg-[#1c1f26] border border-[#262a33] rounded-lg px-3 py-1.5 text-sm text-white placeholder-gray-700 mb-2 focus:outline-none focus:border-[#ff7a3d]/50 resize-none"></textarea>
+        <button type="submit"
+                class="font-jetbrains text-[11px] border border-[#ff7a3d]/40 text-[#ff7a3d] hover:bg-[#ff7a3d]/10 px-3 py-1.5 rounded-lg transition-colors uppercase tracking-widest">
+          ✦ Preguntar
+        </button>
+      </form>
+    </div>
+  </div>
+
   <!-- Comentarios -->
   <div class="bg-[#16181d] border border-[#262a33] rounded-xl overflow-hidden mb-3">
     <div class="px-4 py-3">

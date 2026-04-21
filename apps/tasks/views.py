@@ -6,10 +6,12 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.views.decorators.http import require_POST
 
+from apps.ai_assistant.exceptions import AIGenerationError
+from apps.ai_assistant.services import chat_about_task
 from apps.projects.utils import get_project_membership
 
 from .forms import CommentForm, MaterialForm, StepForm, TaskForm, ToolForm
-from .models import Comment, Material, Step, Task, TaskLink, Tool
+from .models import AIChat, Comment, Material, Step, Task, TaskLink, Tool
 
 
 def _parse_dynamic_lists(post_data):
@@ -114,7 +116,7 @@ def task_create_view(request, project_pk):
 def task_detail_view(request, pk):
     task = get_object_or_404(Task, pk=pk)
     get_project_membership(request, task.project_id)
-    task = Task.objects.prefetch_related("steps", "tools", "materials", "comments__author", "links").get(pk=pk)
+    task = Task.objects.prefetch_related("steps", "tools", "materials", "comments__author", "links", "ai_chats").get(pk=pk)
     tools_total = task.tools.count()
     tools_available = task.tools.filter(available=True).count()
     materials_total = task.materials.count()
@@ -126,6 +128,7 @@ def task_detail_view(request, pk):
         "tools_available": tools_available,
         "materials_total": materials_total,
         "materials_available": materials_available,
+        "ai_chats": task.ai_chats.all(),
     })
 
 
@@ -259,6 +262,35 @@ def task_comment_add(request, pk):
         comment.save()
         return render(request, "tasks/partials/comment.html", {"comment": comment})
     return render(request, "tasks/partials/comment.html", {"comment": None, "error": True})
+
+
+@login_required
+@require_POST
+def task_ai_chat(request, pk):
+    task = get_object_or_404(Task, pk=pk)
+    get_project_membership(request, task.project_id)
+
+    prompt = request.POST.get("prompt", "").strip()[:1000]
+    if not prompt:
+        return render(request, "tasks/partials/ai_chat_item.html", {
+            "ai_error": "La pregunta no puede estar vacía.",
+        })
+
+    task = Task.objects.prefetch_related("steps", "tools", "materials").get(pk=pk)
+
+    try:
+        response_text = chat_about_task(prompt, task)
+    except AIGenerationError:
+        return render(request, "tasks/partials/ai_chat_item.html", {
+            "ai_error": "No se pudo obtener respuesta del asistente. Inténtalo de nuevo.",
+        })
+
+    ai_chat = AIChat.objects.create(task=task, prompt=prompt, response=response_text)
+    item_html = render_to_string("tasks/partials/ai_chat_item.html", {"ai_chat": ai_chat}, request=request)
+    if task.ai_chats.count() == 1:
+        oob_html = '<p id="ai-chat-empty" hx-swap-oob="true"></p>'
+        return HttpResponse(item_html + oob_html)
+    return HttpResponse(item_html)
 
 
 # ── Inline CRUD: Steps ────────────────────────────────────────────────────────
