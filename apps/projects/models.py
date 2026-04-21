@@ -3,8 +3,27 @@ from django.db import models
 
 
 class Project(models.Model):
+    STATUS_PENDING     = "pending"
+    STATUS_IN_PROGRESS = "in_progress"
+    STATUS_BLOCKED     = "blocked"
+    STATUS_CANCELLED   = "cancelled"
+    STATUS_COMPLETED   = "completed"
+    STATUS_CHOICES = [
+        (STATUS_PENDING,     "Pendiente"),
+        (STATUS_IN_PROGRESS, "En progreso"),
+        (STATUS_BLOCKED,     "Bloqueado"),
+        (STATUS_CANCELLED,   "Cancelado"),
+        (STATUS_COMPLETED,   "Completado"),
+    ]
+
     name = models.CharField(max_length=200, verbose_name="nombre")
     description = models.TextField(blank=True, verbose_name="descripción")
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default=STATUS_PENDING,
+        verbose_name="estado",
+    )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,

@@ -186,7 +186,9 @@ def task_status_view(request, pk):
     if new_status in dict(Task.STATUS_CHOICES):
         task.status = new_status
         task.save(update_fields=["status", "updated_at"])
-    return render(request, "tasks/partials/task_status_badge.html", {"task": task})
+    response = render(request, "tasks/partials/task_status_badge.html", {"task": task})
+    response["HX-Trigger"] = "statsChanged"
+    return response
 
 
 @login_required

@@ -1,0 +1,18 @@
+<div id="project-status-badge-{{ project.pk }}">
+  <select name="status"
+          hx-post="{% url 'project_status_update' project.pk %}"
+          hx-target="#project-status-badge-{{ project.pk }}"
+          hx-swap="outerHTML"
+          hx-trigger="change"
+          class="text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full border cursor-pointer focus:outline-none appearance-none
+            {% if project.status == 'pending' %}bg-zinc-800 text-zinc-400 border-zinc-700/40
+            {% elif project.status == 'in_progress' %}bg-orange-900/60 text-orange-400 border-orange-700/40
+            {% elif project.status == 'blocked' %}bg-red-900/60 text-red-400 border-red-700/40
+            {% elif project.status == 'cancelled' %}bg-zinc-900 text-zinc-600 border-zinc-800
+            {% elif project.status == 'completed' %}bg-green-900/60 text-green-400 border-green-700/40
+            {% endif %}">
+    {% for value, label in project.STATUS_CHOICES %}
+      <option value="{{ value }}" {% if project.status == value %}selected{% endif %} class="bg-[#1a1d24] text-gray-300 normal-case tracking-normal font-normal">{{ label }}</option>
+    {% endfor %}
+  </select>
+</div>

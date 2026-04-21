@@ -3,15 +3,17 @@ from django.db import models
 
 
 class Task(models.Model):
-    STATUS_PENDING = "pending"
+    STATUS_PENDING     = "pending"
     STATUS_IN_PROGRESS = "in_progress"
-    STATUS_BLOCKED = "blocked"
-    STATUS_CANCELLED = "cancelled"
+    STATUS_BLOCKED     = "blocked"
+    STATUS_CANCELLED   = "cancelled"
+    STATUS_COMPLETED   = "completed"
     STATUS_CHOICES = [
-        (STATUS_PENDING, "Pendiente"),
+        (STATUS_PENDING,     "Pendiente"),
         (STATUS_IN_PROGRESS, "En progreso"),
-        (STATUS_BLOCKED, "Bloqueada"),
-        (STATUS_CANCELLED, "Cancelada"),
+        (STATUS_BLOCKED,     "Bloqueada"),
+        (STATUS_CANCELLED,   "Cancelada"),
+        (STATUS_COMPLETED,   "Completada"),
     ]
 
     DIFFICULTY_EASY = "easy"

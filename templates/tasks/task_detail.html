@@ -7,11 +7,14 @@
 
   <!-- Breadcrumb + acciones -->
   <div class="flex items-center justify-between mb-4">
-    <a href="{% url 'project_detail' task.project.pk %}"
-       class="flex items-center gap-1.5 font-jetbrains text-[11px] text-gray-400 hover:text-white bg-[#1a1d24] border border-[#333] hover:border-[#555] px-3 py-1.5 rounded-full transition-colors">
-      <span class="text-sm leading-none">&#8249;</span>
-      <span>Atrás</span>
-    </a>
+    <div class="flex items-center gap-3">
+      <a href="{% url 'project_detail' task.project.pk %}"
+         class="flex items-center gap-1.5 font-jetbrains text-[11px] text-gray-400 hover:text-white bg-[#1a1d24] border border-[#333] hover:border-[#555] px-3 py-1.5 rounded-full transition-colors flex-shrink-0">
+        <span class="text-sm leading-none">&#8249;</span>
+        <span>Atrás</span>
+      </a>
+      {% include "tasks/partials/task_status_badge.html" with task=task %}
+    </div>
     <div class="flex items-center gap-2">
       <a href="{% url 'task_edit' task.pk %}"
          class="font-jetbrains text-[11px] border border-[#262a33] text-gray-500 hover:text-[#ff7a3d] hover:border-[#ff7a3d]/40 px-3 py-1.5 rounded-lg transition-colors uppercase tracking-widest">
@@ -24,7 +27,7 @@
     </div>
   </div>
 
-  <!-- Título -->
+  <!-- Título + descripción -->
   <div class="mb-3">
     <div class="flex items-center gap-2 mb-2 flex-wrap">
       {% if task.ai_generated %}
@@ -32,20 +35,16 @@
       {% endif %}
       <span class="font-jetbrains text-[10px] text-gray-700 uppercase tracking-widest">{{ task.project.name }}</span>
     </div>
-    <h1 class="font-display text-4xl text-white tracking-wider uppercase leading-none mb-3">
+    <h1 class="font-display text-4xl text-white tracking-wider uppercase leading-none mb-2">
       {{ task.name }}
     </h1>
+    {% if task.description %}
+      <p class="text-sm text-gray-400 leading-relaxed mb-3">{{ task.description }}</p>
+    {% endif %}
     <div class="flex items-center gap-2 flex-wrap">
       {% include "tasks/partials/task_meta_display.html" with task=task %}
-      {% include "tasks/partials/task_status_badge.html" with task=task %}
     </div>
   </div>
-
-  {% if task.description %}
-  <div class="bg-[#16181d] border border-[#262a33] rounded-xl p-4 mb-3">
-    <p class="text-sm text-gray-400 leading-relaxed">{{ task.description }}</p>
-  </div>
-  {% endif %}
 
   <!-- Pasos de ejecución -->
   <div class="bg-[#16181d] border border-[#262a33] rounded-xl overflow-hidden mb-3">

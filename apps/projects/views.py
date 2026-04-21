@@ -1,7 +1,9 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError, transaction
+from django.db.models import Sum
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
 
 from apps.accounts.models import User
 from apps.tasks.models import Task
@@ -47,22 +49,92 @@ def project_detail_view(request, pk):
     membership = get_project_membership(request, pk)
     project = membership.project
 
+    all_tasks = project.tasks.all()
+    completed_count = all_tasks.filter(status=Task.STATUS_COMPLETED).count()
+    active_count    = all_tasks.exclude(status=Task.STATUS_CANCELLED).count()
+    progress_pct    = round(completed_count / active_count * 100) if active_count else 0
+    total_minutes   = all_tasks.aggregate(total=Sum("estimated_time", default=0))["total"]
+    total_hours     = round(total_minutes / 60, 1)
+    members         = ProjectMember.objects.filter(project=project).select_related("user")
+
     status_filter = request.GET.get("status", "")
-    tasks_qs = project.tasks.select_related("created_by").order_by("-created_at")
+    tasks_qs = all_tasks.select_related("created_by").order_by("-created_at")
     if status_filter:
         tasks_qs = tasks_qs.filter(status=status_filter)
 
     context = {
-        "project": project,
-        "membership": membership,
-        "tasks": tasks_qs,
-        "status_filter": status_filter,
-        "status_choices": Task.STATUS_CHOICES,
+        "project":         project,
+        "membership":      membership,
+        "tasks":           tasks_qs,
+        "status_filter":   status_filter,
+        "status_choices":  Task.STATUS_CHOICES,
+        "completed_count": completed_count,
+        "active_count":    active_count,
+        "progress_pct":    progress_pct,
+        "total_hours":     total_hours,
+        "members":         members,
     }
 
     if request.htmx:
         return render(request, "projects/partials/task_list.html", context)
     return render(request, "projects/project_detail.html", context)
+
+
+@login_required
+@require_POST
+def project_status_update_view(request, pk):
+    membership = get_project_membership(request, pk)
+    project = membership.project
+    new_status = request.POST.get("status", "")
+    if new_status in dict(Project.STATUS_CHOICES):
+        project.status = new_status
+        project.save(update_fields=["status", "updated_at"])
+    return render(request, "projects/partials/project_status_badge.html", {"project": project})
+
+
+@login_required
+def project_name_view(request, pk):
+    membership = get_project_membership(request, pk)
+    return render(request, "projects/partials/project_name_display.html", {"project": membership.project})
+
+
+@login_required
+def project_name_edit_form(request, pk):
+    membership = get_project_membership(request, pk)
+    return render(request, "projects/partials/project_name_edit.html", {"project": membership.project})
+
+
+@login_required
+@require_POST
+def project_name_update_view(request, pk):
+    membership = get_project_membership(request, pk)
+    project = membership.project
+    name = request.POST.get("name", "").strip()
+    description = request.POST.get("description", "").strip()
+    if name:
+        project.name = name
+        project.description = description
+        project.save(update_fields=["name", "description", "updated_at"])
+    return render(request, "projects/partials/project_name_display.html", {"project": project})
+
+
+@login_required
+def project_stats_view(request, pk):
+    membership = get_project_membership(request, pk)
+    project = membership.project
+    all_tasks = project.tasks.all()
+    completed_count = all_tasks.filter(status=Task.STATUS_COMPLETED).count()
+    active_count    = all_tasks.exclude(status=Task.STATUS_CANCELLED).count()
+    progress_pct    = round(completed_count / active_count * 100) if active_count else 0
+    total_minutes   = all_tasks.aggregate(total=Sum("estimated_time", default=0))["total"]
+    total_hours     = round(total_minutes / 60, 1)
+    return render(request, "projects/partials/project_stats.html", {
+        "project":         project,
+        "completed_count": completed_count,
+        "active_count":    active_count,
+        "progress_pct":    progress_pct,
+        "total_hours":     total_hours,
+    })
 
 
 @login_required

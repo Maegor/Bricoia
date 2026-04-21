@@ -1,0 +1,14 @@
+<div id="project-name-{{ project.pk }}" class="min-w-0">
+  <button type="button"
+          hx-get="{% url 'project_name_edit' project.pk %}"
+          hx-target="#project-name-{{ project.pk }}"
+          hx-swap="outerHTML"
+          class="group text-left w-full">
+    <h1 class="text-3xl font-bold text-white leading-tight group-hover:text-orange-400 transition-colors">{{ project.name }}</h1>
+    {% if project.description %}
+      <p class="text-sm text-gray-500 mt-1.5 group-hover:text-gray-400 transition-colors">{{ project.description }}</p>
+    {% else %}
+      <p class="text-sm text-gray-700 mt-1.5 group-hover:text-gray-500 transition-colors border-b border-dashed border-zinc-800 group-hover:border-zinc-600 inline-block">+ Añadir descripción</p>
+    {% endif %}
+  </button>
+</div>

@@ -5,9 +5,15 @@
           hx-target="#task-status-{{ task.pk }}"
           hx-swap="outerHTML"
           hx-trigger="change"
-          class="text-xs border border-[#444] rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-orange-500 cursor-pointer {{ task.status|status_badge }}">
+          class="text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full border cursor-pointer focus:outline-none appearance-none
+            {% if task.status == 'pending' %}bg-zinc-800 text-zinc-400 border-zinc-700/40
+            {% elif task.status == 'in_progress' %}bg-orange-900/60 text-orange-400 border-orange-700/40
+            {% elif task.status == 'blocked' %}bg-red-900/60 text-red-400 border-red-700/40
+            {% elif task.status == 'cancelled' %}bg-zinc-900 text-zinc-600 border-zinc-800
+            {% elif task.status == 'completed' %}bg-green-900/60 text-green-400 border-green-700/40
+            {% endif %}">
     {% for value, label in task.STATUS_CHOICES %}
-      <option value="{{ value }}" {% if task.status == value %}selected{% endif %}>{{ label }}</option>
+      <option value="{{ value }}" {% if task.status == value %}selected{% endif %} class="bg-[#1a1d24] text-gray-300 normal-case tracking-normal font-normal">{{ label }}</option>
     {% endfor %}
   </select>
 </div>

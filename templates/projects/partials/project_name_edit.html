@@ -1,0 +1,28 @@
+<div id="project-name-{{ project.pk }}" class="min-w-0">
+  <form hx-post="{% url 'project_name_update' project.pk %}"
+        hx-target="#project-name-{{ project.pk }}"
+        hx-swap="outerHTML"
+        class="flex flex-col gap-2">
+    {% csrf_token %}
+    <input type="text" name="name" value="{{ project.name }}" required
+           autofocus
+           class="text-2xl font-bold bg-transparent border-b border-orange-500/60 text-white focus:outline-none focus:border-orange-500 pb-0.5 w-full placeholder-zinc-600"
+           placeholder="Nombre del proyecto">
+    <textarea name="description" rows="2"
+              class="text-sm bg-[#1a1d24] border border-[#333] focus:border-orange-500/60 rounded-lg px-3 py-2 text-gray-300 focus:outline-none resize-none placeholder-zinc-600 w-full"
+              placeholder="Descripción (opcional)">{{ project.description }}</textarea>
+    <div class="flex gap-2">
+      <button type="submit"
+              class="font-jetbrains text-[11px] bg-orange-500 hover:bg-orange-400 text-black font-bold px-3 py-1 rounded transition-colors">
+        ✓ Guardar
+      </button>
+      <button type="button"
+              hx-get="{% url 'project_name_view' project.pk %}"
+              hx-target="#project-name-{{ project.pk }}"
+              hx-swap="outerHTML"
+              class="font-jetbrains text-[11px] bg-[#1a1d24] hover:bg-[#222] border border-[#333] text-gray-400 px-3 py-1 rounded transition-colors">
+        Cancelar
+      </button>
+    </div>
+  </form>
+</div>
