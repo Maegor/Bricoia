@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError, transaction
-from django.db.models import Sum
+from django.db.models import Count, Q, Sum
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
@@ -13,14 +13,47 @@ from .models import Project, ProjectMember
 from .utils import get_project_membership
 
 
+_ACCENT_CONFIGS = [
+    {"color": "#ff7a3d", "soft": "rgba(255,122,61,0.12)", "border": "rgba(255,122,61,0.35)"},
+    {"color": "#60a5fa", "soft": "rgba(96,165,250,0.12)", "border": "rgba(96,165,250,0.35)"},
+    {"color": "#10b981", "soft": "rgba(16,185,129,0.12)", "border": "rgba(16,185,129,0.35)"},
+    {"color": "#f59e0b", "soft": "rgba(245,158,11,0.12)", "border": "rgba(245,158,11,0.35)"},
+]
+
 @login_required
 def project_list_view(request):
-    memberships = (
+    memberships = list(
         ProjectMember.objects.filter(user=request.user)
         .select_related("project", "project__owner")
+        .prefetch_related("project__members__user")
+        .annotate(
+            tasks_count=Count("project__tasks", distinct=True),
+            done_count=Count(
+                "project__tasks",
+                filter=Q(project__tasks__status=Task.STATUS_COMPLETED),
+                distinct=True,
+            ),
+        )
         .order_by("-project__created_at")
     )
-    return render(request, "projects/project_list.html", {"memberships": memberships})
+
+    for i, m in enumerate(memberships):
+        m.accent = _ACCENT_CONFIGS[i % len(_ACCENT_CONFIGS)]
+        m.progress_pct = round(m.done_count / m.tasks_count * 100) if m.tasks_count else 0
+
+    total_tasks = sum(m.tasks_count for m in memberships)
+    total_done = sum(m.done_count for m in memberships)
+    owned_count = sum(1 for m in memberships if m.role == ProjectMember.ROLE_OWNER)
+    global_pct = round(total_done / total_tasks * 100) if total_tasks else 0
+
+    return render(request, "projects/project_list.html", {
+        "memberships": memberships,
+        "total_projects": len(memberships),
+        "total_tasks": total_tasks,
+        "total_done": total_done,
+        "owned_count": owned_count,
+        "global_pct": global_pct,
+    })
 
 
 @login_required

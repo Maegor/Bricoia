@@ -20,7 +20,7 @@ devuelve ÚNICAMENTE un objeto JSON válido con estos campos:
 No incluyas texto adicional, solo el JSON.
 """
 
-
+MODEL_NAME = "gemini-3.1-flash-lite-preview"
 def generate_task_fields(prompt: str) -> dict:
     """
     Call Gemini API and return structured task field suggestions.
@@ -44,7 +44,7 @@ def generate_task_fields(prompt: str) -> dict:
     try:
         client = genai.Client(api_key=settings.GEMINI_API_KEY)
         response = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model=MODEL_NAME,
             contents=f"Descripción de la tarea:\n\"{prompt}\"",
             config=types.GenerateContentConfig(
                 system_instruction=_SYSTEM_PROMPT,
@@ -117,7 +117,7 @@ def chat_about_task(prompt: str, task) -> str:
     try:
         client = genai.Client(api_key=settings.GEMINI_API_KEY)
         response = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model=MODEL_NAME,
             contents=contents,
             config=types.GenerateContentConfig(
                 system_instruction=_CHAT_SYSTEM_PROMPT,
