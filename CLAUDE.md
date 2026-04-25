@@ -54,6 +54,7 @@ DB_PORT=5432
 | `projects` | `Project` + `ProjectMember` (roles owner/member), dashboard, invitar usuarios |
 | `tasks` | `Task`, `Step`, `Tool`, `Material`; CRUD, cambio de estado HTMX, filas dinámicas |
 | `ai_assistant` | Sin modelos; servicio Gemini en `services.py`, endpoint HTMX `/ai/generate/` |
+| `designs` | `Design` (FK Project); generación de imágenes con Gemini Imagen; almacenamiento en `/brocoia/` |
 
 ### Modelos clave
 
@@ -62,6 +63,7 @@ DB_PORT=5432
 - `Comment` → `task` (FK), `author` (FK User), `body` (Text), `created_at` (auto). Índice `(task, created_at)`. Ordering por `created_at`.
 - `ProjectMember` → relación many-to-many User↔Project con rol. Unique `(project, user)`.
 - `TaskLink` → `task` (FK), `url` (URLField max 500), `description` (CharField max 200). Ordering por `pk`.
+- `Design` → `project` (FK), `prompt` (Text), `uploaded_image`/`generated_image` (CharField rutas absolutas en `/brocoia/`), `status` (pending/completed/failed), `created_by` (FK User nullable). Métodos `get_uploaded_image_url()`/`get_generated_image_url()` convierten rutas a URL `/media/...`.
 
 ### Patrones importantes
 
@@ -115,6 +117,10 @@ DB_PORT=5432
 /tasks/materials/<pk>/update/       HTMX: guardar material (POST)
 /tasks/materials/<pk>/delete/       HTMX: borrar material (POST)
 /tasks/<pk>/materials/add/          HTMX: crear material (POST)
+/projects/<pk>/designs/             Página de diseños: formulario inicial + historial de ideas
+/projects/<pk>/designs/create/      HTMX: generar imagen desde fichero (POST, devuelve design_item.html)
+/designs/<pk>/refine/form/          HTMX: formulario de refinamiento (GET partial, sin file upload)
+/designs/<pk>/refine/               HTMX: refinar diseño con nuevas indicaciones (POST, devuelve design_item.html)
 ```
 
 ### Integración Gemini

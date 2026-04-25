@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     "apps.projects",
     "apps.tasks",
     "apps.ai_assistant",
+    "apps.designs",
 ]
 
 MIDDLEWARE = [
@@ -95,3 +96,41 @@ LOGIN_REDIRECT_URL = "/projects/"
 LOGOUT_REDIRECT_URL = "/login/"
 
 GEMINI_API_KEY = config("GEMINI_API_KEY", default="")
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "simple": {
+            "format": "[{asctime}] {levelname} {name}: {message}",
+            "style": "{",
+            "datefmt": "%H:%M:%S",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "WARNING",
+    },
+    "loggers": {
+        "apps.designs": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "django.request": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+    },
+}
+
+BROCOIA_STORAGE_PATH = Path(config("BROCOIA_STORAGE_PATH", default="/opt/bricoia"))
+MEDIA_ROOT = BROCOIA_STORAGE_PATH
+MEDIA_URL = "/media/"

@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}Nueva Idea — {{ project.name }} — Bricoia{% endblock %}
+
+{% block content %}
+
+<div class="mb-8">
+  <div class="flex items-center gap-3 mb-4">
+    <a href="{% url 'design_list' project.pk %}"
+       class="flex items-center gap-1.5 font-jetbrains text-[11px] text-gray-400 hover:text-white bg-[#1a1d24] border border-[#333] hover:border-[#555] px-3 py-1.5 rounded-full transition-colors flex-shrink-0">
+      <span class="text-sm leading-none">&#8249;</span>
+      <span>Ideas</span>
+    </a>
+    <span class="font-jetbrains text-xs text-gray-600">{{ project.name }}</span>
+  </div>
+  <h1 class="text-2xl font-bold text-white">Nueva Idea de Diseño</h1>
+  <p class="text-sm text-gray-500 mt-1">Solo imágenes de viviendas: habitaciones, jardines, fachadas y exteriores.</p>
+</div>
+
+{% if error %}
+  <div class="font-jetbrains text-[11px] text-red-400 bg-red-900/20 border border-red-800/50 rounded-lg px-4 py-3 mb-6">
+    {{ error }}
+  </div>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data" class="space-y-6 max-w-2xl">
+  {% csrf_token %}
+
+  <!-- Título -->
+  <div>
+    <label class="block font-jetbrains text-[10px] font-semibold text-gray-500 uppercase tracking-widest mb-1.5">
+      Título <span class="text-orange-500">*</span>
+    </label>
+    <input type="text"
+           name="title"
+           value="{{ form.title.value|default:'' }}"
+           maxlength="200"
+           required
+           placeholder="Ej: Reforma salón estilo industrial"
+           class="w-full bg-[#1a1d24] border border-[#333] text-white rounded-lg px-3 py-2.5 text-sm
+                  focus:outline-none focus:border-orange-500/50 hover:border-[#555] transition-colors">
+    {% if form.title.errors %}
+      <p class="text-red-400 text-xs mt-1">{{ form.title.errors|join:", " }}</p>
+    {% endif %}
+  </div>
+
+  <!-- Descripción -->
+  <div>
+    <label class="block font-jetbrains text-[10px] font-semibold text-gray-500 uppercase tracking-widest mb-1.5">
+      Descripción
+    </label>
+    <textarea name="description"
+              rows="3"
+              maxlength="2000"
+              placeholder="Describe brevemente qué quieres conseguir con este diseño..."
+              class="w-full bg-[#1a1d24] border border-[#333] text-white rounded-lg px-3 py-2.5 text-sm
+                     focus:outline-none focus:border-orange-500/50 resize-none hover:border-[#555] transition-colors">{{ form.description.value|default:'' }}</textarea>
+    {% if form.description.errors %}
+      <p class="text-red-400 text-xs mt-1">{{ form.description.errors|join:", " }}</p>
+    {% endif %}
+  </div>
+
+  <!-- Imagen de referencia -->
+  <div>
+    <label class="block font-jetbrains text-[10px] font-semibold text-gray-500 uppercase tracking-widest mb-1.5">
+      Imagen de referencia <span class="text-orange-500">*</span>
+    </label>
+    <input type="file"
+           name="image"
+           accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp"
+           required
+           class="w-full bg-[#0a0b0e] border border-[#333] text-gray-400 rounded-lg px-3 py-2 text-sm
+                  file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0
+                  file:bg-orange-500/20 file:text-orange-400 file:text-xs file:font-medium
+                  hover:border-[#555] transition-colors cursor-pointer">
+    {% if form.image.errors %}
+      <p class="text-red-400 text-xs mt-1">{{ form.image.errors|join:", " }}</p>
+    {% endif %}
+    <p class="text-gray-700 text-xs mt-1">PNG, JPG o WEBP. Las imágenes mayores de 1920×1080 se redimensionarán automáticamente.</p>
+  </div>
+
+  <!-- Separador -->
+  <div class="border-t border-[#222] pt-6">
+    <p class="font-jetbrains text-[10px] text-orange-500 uppercase tracking-widest mb-4">Generación con IA</p>
+
+    <!-- Prompt -->
+    <div>
+      <label class="block font-jetbrains text-[10px] font-semibold text-gray-500 uppercase tracking-widest mb-1.5">
+        Instrucciones para Gemini <span class="text-orange-500">*</span>
+      </label>
+      <textarea name="prompt"
+                rows="4"
+                maxlength="1000"
+                required
+                placeholder="Ej: Transforma esta habitación en un estilo nórdico minimalista con tonos blancos, madera natural y mucha luz..."
+                class="w-full bg-[#0a0b0e] border border-[#333] text-white rounded-lg px-3 py-2.5 text-sm
+                       focus:outline-none focus:border-orange-500/50 resize-none hover:border-[#555] transition-colors">{{ form.prompt.value|default:'' }}</textarea>
+      {% if form.prompt.errors %}
+        <p class="text-red-400 text-xs mt-1">{{ form.prompt.errors|join:", " }}</p>
+      {% endif %}
+    </div>
+
+    <!-- Botón -->
+    <div class="flex items-center gap-4 mt-4">
+      <button type="submit"
+              class="flex items-center gap-2 bg-orange-500 hover:bg-orange-400 text-black font-bold text-xs
+                     uppercase tracking-widest px-6 py-3 rounded-lg transition-colors">
+        ✨ Generar Idea
+      </button>
+      <a href="{% url 'design_list' project.pk %}"
+         class="font-jetbrains text-[10px] text-gray-600 hover:text-gray-400 uppercase tracking-widest transition-colors">
+        Cancelar
+      </a>
+      <p class="font-jetbrains text-[10px] text-gray-700 ml-auto">La generación puede tardar unos segundos</p>
+    </div>
+  </div>
+
+</form>
+
+{% endblock %}

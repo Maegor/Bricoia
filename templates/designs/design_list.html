@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}Ideas — {{ project.name }} — Bricoia{% endblock %}
+
+{% block content %}
+
+<div class="mb-8">
+  <div class="flex items-center gap-3 mb-4">
+    <a href="{% url 'project_detail' project.pk %}"
+       class="flex items-center gap-1.5 font-jetbrains text-[11px] text-gray-400 hover:text-white bg-[#1a1d24] border border-[#333] hover:border-[#555] px-3 py-1.5 rounded-full transition-colors flex-shrink-0">
+      <span class="text-sm leading-none">&#8249;</span>
+      <span>{{ project.name }}</span>
+    </a>
+  </div>
+  <div class="flex items-end justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-white mb-1">Ideas de Diseño</h1>
+      <p class="text-sm text-gray-500">{{ designs|length }} idea{% if designs|length != 1 %}s{% endif %} en este proyecto</p>
+    </div>
+    <a href="{% url 'design_new' project.pk %}"
+       class="flex items-center gap-1.5 bg-orange-500 hover:bg-orange-400 text-black font-bold text-xs
+              uppercase tracking-widest px-4 py-2 rounded-lg border border-dashed border-orange-300/50 transition-colors flex-shrink-0">
+      + Nueva Idea
+    </a>
+  </div>
+</div>
+
+{% if designs %}
+  <div class="grid grid-cols-1 gap-4">
+    {% for design in designs %}
+      {% with last=design.last_generation %}
+      <a href="{% url 'design_detail' design.pk %}"
+         class="group bg-[#16181d] border border-[#262a33] hover:border-[#3a3f4a] rounded-xl overflow-hidden transition-colors flex gap-0">
+
+        <!-- Imagen original -->
+        <div class="relative w-48 flex-shrink-0">
+          <div class="absolute top-2 left-2 z-10">
+            <span class="font-jetbrains text-[9px] bg-[#0a0b0e]/80 text-gray-400 px-2 py-0.5 rounded uppercase tracking-widest">
+              Original
+            </span>
+          </div>
+          {% if design.get_original_image_url %}
+            <img src="{{ design.get_original_image_url }}"
+                 alt="Imagen original"
+                 class="w-full h-full object-cover">
+          {% else %}
+            <div class="w-full h-full bg-[#0a0b0e] flex items-center justify-center min-h-[120px]">
+              <span class="text-gray-700 text-xs">Sin imagen</span>
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Última generada -->
+        <div class="relative w-48 flex-shrink-0 border-l border-[#262a33]">
+          <div class="absolute top-2 left-2 z-10">
+            <span class="font-jetbrains text-[9px] bg-orange-500/80 text-black px-2 py-0.5 rounded uppercase tracking-widest">
+              IA
+            </span>
+          </div>
+          {% if last and last.get_generated_image_url %}
+            <img src="{{ last.get_generated_image_url }}"
+                 alt="Última generada"
+                 class="w-full h-full object-cover">
+          {% else %}
+            <div class="w-full h-full bg-[#0a0b0e] flex items-center justify-center min-h-[120px]">
+              <span class="text-gray-700 text-xs">Sin generación</span>
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Info -->
+        <div class="flex-1 px-5 py-4 flex flex-col justify-between">
+          <div>
+            <h3 class="text-white font-semibold text-sm group-hover:text-orange-400 transition-colors mb-1">
+              {{ design.title }}
+            </h3>
+            {% if design.description %}
+              <p class="text-gray-500 text-xs leading-relaxed">{{ design.description|truncatechars:150 }}</p>
+            {% endif %}
+          </div>
+          <div class="flex items-center gap-3 mt-3">
+            <span class="font-jetbrains text-[9px] text-gray-700">
+              {{ design.images.count }} generación{% if design.images.count != 1 %}es{% endif %}
+            </span>
+            <span class="text-gray-800">·</span>
+            <span class="font-jetbrains text-[9px] text-gray-700">
+              {{ design.created_at|date:"d M Y" }}
+            </span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3 px-4">
+          <a href="{% url 'design_delete' design.pk %}"
+             onclick="event.stopPropagation()"
+             class="font-jetbrains text-[10px] text-gray-700 hover:text-red-400 uppercase tracking-widest transition-colors py-2">
+            Borrar
+          </a>
+          <span class="text-gray-700 group-hover:text-orange-500 transition-colors">›</span>
+        </div>
+      </a>
+      {% endwith %}
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="text-center py-16 border border-dashed border-[#2a2a2a] rounded-xl">
+    <p class="text-4xl mb-4">🏠</p>
+    <p class="text-gray-500 text-sm mb-6">Aún no hay ideas de diseño en este proyecto.</p>
+    <a href="{% url 'design_new' project.pk %}"
+       class="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-400 text-black font-bold text-xs
+              uppercase tracking-widest px-5 py-2.5 rounded-lg transition-colors">
+      ✨ Crear primera idea
+    </a>
+  </div>
+{% endif %}
+
+{% endblock %}

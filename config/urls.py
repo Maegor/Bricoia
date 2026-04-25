@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
@@ -18,9 +19,11 @@ urlpatterns = [
     path("", include("apps.projects.urls")),
     path("", include("apps.tasks.urls")),
     path("", include("apps.ai_assistant.urls")),
+    path("", include("apps.designs.urls")),
 ]
 
 if settings.DEBUG:
     import debug_toolbar
 
     urlpatterns = [path("__debug__/", include(debug_toolbar.urls))] + urlpatterns
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

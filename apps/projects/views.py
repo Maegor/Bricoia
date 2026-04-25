@@ -79,6 +79,8 @@ def project_create_view(request):
 
 @login_required
 def project_detail_view(request, pk):
+    from apps.designs.models import Design
+
     membership = get_project_membership(request, pk)
     project = membership.project
 
@@ -106,6 +108,7 @@ def project_detail_view(request, pk):
         "progress_pct":    progress_pct,
         "total_hours":     total_hours,
         "members":         members,
+        "designs":         Design.objects.filter(project=project).select_related("created_by").prefetch_related("images").order_by("-created_at"),
     }
 
     if request.htmx:

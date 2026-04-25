@@ -1,0 +1,53 @@
+<div id="refine-form-{{ parent_image.pk }}" class="mt-3 bg-[#1a1d24] border border-orange-500/20 rounded-xl p-5">
+  <div class="flex items-center gap-2 mb-3">
+    <span class="text-orange-500 text-xs">↳</span>
+    <span class="font-jetbrains text-[10px] font-semibold text-orange-500 uppercase tracking-widest">
+      Refinar generación #{{ parent_image.pk }}
+    </span>
+    <span class="font-jetbrains text-[10px] text-gray-600">— usando la imagen generada como base</span>
+  </div>
+
+  {% if error %}
+    <div class="font-jetbrains text-[11px] text-red-400 bg-red-900/20 border border-red-800/50 rounded-lg px-4 py-3 mb-3">
+      {{ error }}
+    </div>
+  {% endif %}
+
+  <form hx-post="{% url 'design_refine' parent_image.pk %}"
+        hx-target="#images-list"
+        hx-swap="afterbegin"
+        hx-indicator="#refine-spinner-{{ parent_image.pk }}"
+        class="space-y-3">
+    {% csrf_token %}
+
+    <textarea name="prompt"
+              rows="3"
+              maxlength="1000"
+              required
+              placeholder="Ej: Ahora añade plantas de interior y cambia el suelo a parquet oscuro..."
+              class="w-full bg-[#0a0b0e] border border-[#333] text-white rounded-lg px-3 py-2 text-sm
+                     focus:outline-none focus:border-orange-500/50 resize-none hover:border-[#555] transition-colors">{% if form.prompt.value %}{{ form.prompt.value }}{% endif %}</textarea>
+    {% if form.prompt.errors %}
+      <p class="text-red-400 text-xs mt-1">{{ form.prompt.errors|join:", " }}</p>
+    {% endif %}
+
+    <div class="flex items-center justify-between">
+      <div id="refine-spinner-{{ parent_image.pk }}" class="htmx-indicator flex items-center gap-2">
+        <div class="w-4 h-4 border-2 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+        <span class="font-jetbrains text-[10px] text-orange-400">Generando...</span>
+      </div>
+      <div class="flex items-center gap-2 ml-auto">
+        <button type="button"
+                onclick="document.getElementById('refine-form-{{ parent_image.pk }}').remove()"
+                class="font-jetbrains text-[10px] text-gray-600 hover:text-gray-400 uppercase tracking-widest px-3 py-2 transition-colors">
+          Cancelar
+        </button>
+        <button type="submit"
+                class="flex items-center gap-2 bg-orange-500 hover:bg-orange-400 text-black font-bold text-xs
+                       uppercase tracking-widest px-4 py-2 rounded-lg transition-colors">
+          ✨ Refinar
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

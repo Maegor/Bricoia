@@ -1,0 +1,78 @@
+<div id="design-image-{{ img.pk }}" class="bg-[#16181d] border border-[#262a33] rounded-xl overflow-hidden">
+  <div class="flex items-center justify-between px-4 py-3 border-b border-[#262a33]">
+    <div class="flex items-center gap-2">
+      <span class="text-orange-500 text-sm">✨</span>
+      <span class="font-jetbrains text-[10px] font-semibold text-gray-500 uppercase tracking-widest">
+        Generación #{{ img.pk }}
+      </span>
+      {% if img.parent %}
+        <span class="font-jetbrains text-[9px] text-gray-700">↳ refinado desde #{{ img.parent_id }}</span>
+      {% endif %}
+    </div>
+    <span class="font-jetbrains text-[10px] text-gray-700">{{ img.created_at|date:"d M Y, H:i" }}</span>
+  </div>
+
+  <div class="grid grid-cols-2">
+    <!-- Imagen base usada -->
+    <div class="relative">
+      <div class="absolute top-2 left-2 z-10">
+        <span class="font-jetbrains text-[9px] bg-[#0a0b0e]/80 text-gray-400 px-2 py-0.5 rounded uppercase tracking-widest">
+          {% if img.parent %}Base anterior{% else %}Original{% endif %}
+        </span>
+      </div>
+      {% if img.get_source_image_url %}
+        <img src="{{ img.get_source_image_url }}" alt="Imagen base" class="w-full h-52 object-cover">
+      {% else %}
+        <div class="w-full h-52 bg-[#0a0b0e]"></div>
+      {% endif %}
+    </div>
+
+    <!-- Imagen generada -->
+    <div class="relative border-l border-[#262a33]">
+      <div class="absolute top-2 left-2 z-10">
+        <span class="font-jetbrains text-[9px] bg-orange-500/80 text-black px-2 py-0.5 rounded uppercase tracking-widest">
+          IA Generada
+        </span>
+      </div>
+      {% if img.status == "completed" and img.get_generated_image_url %}
+        <img src="{{ img.get_generated_image_url }}" alt="Imagen generada" class="w-full h-52 object-cover">
+      {% elif img.status == "failed" %}
+        <div class="w-full h-52 flex items-center justify-center bg-red-900/10">
+          <div class="text-center px-4">
+            <p class="text-red-400 text-xs font-medium mb-1">Error en generación</p>
+            {% if img.error_message %}
+              <p class="text-gray-600 text-xs leading-relaxed">{{ img.error_message|truncatechars:120 }}</p>
+            {% endif %}
+          </div>
+        </div>
+      {% else %}
+        <div class="w-full h-52 flex items-center justify-center bg-[#0a0b0e]">
+          <p class="text-gray-700 text-xs">Generando...</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Pie: prompt + botón refinar -->
+  <div class="px-4 py-3 border-t border-[#262a33] flex items-start justify-between gap-4">
+    <div class="min-w-0">
+      <p class="text-gray-400 text-xs leading-relaxed">{{ img.prompt|truncatechars:200 }}</p>
+      <p class="font-jetbrains text-[9px] text-gray-700 mt-1">
+        por {{ img.created_by.username|default:"—" }}
+      </p>
+    </div>
+    {% if img.status == "completed" %}
+      <button hx-get="{% url 'design_refine_form' img.pk %}"
+              hx-target="#refine-form-{{ img.pk }}"
+              hx-swap="outerHTML"
+              class="flex-shrink-0 flex items-center gap-1.5 font-jetbrains text-[10px] text-orange-400
+                     hover:text-orange-300 border border-orange-500/30 hover:border-orange-500/60
+                     px-3 py-1.5 rounded-lg transition-colors uppercase tracking-widest">
+        ↺ Refinar
+      </button>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Contenedor del formulario de refinamiento -->
+<div id="refine-form-{{ img.pk }}"></div>
