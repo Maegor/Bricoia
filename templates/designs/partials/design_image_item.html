@@ -21,7 +21,9 @@
         </span>
       </div>
       {% if img.get_source_image_url %}
-        <img src="{{ img.get_source_image_url }}" alt="Imagen base" class="w-full h-52 object-cover">
+        <img src="{{ img.get_source_image_url }}" alt="Imagen base"
+             class="w-full h-52 object-cover cursor-zoom-in"
+             onclick="openLightbox(this.src)">
       {% else %}
         <div class="w-full h-52 bg-[#0a0b0e]"></div>
       {% endif %}
@@ -35,7 +37,9 @@
         </span>
       </div>
       {% if img.status == "completed" and img.get_generated_image_url %}
-        <img src="{{ img.get_generated_image_url }}" alt="Imagen generada" class="w-full h-52 object-cover">
+        <img src="{{ img.get_generated_image_url }}" alt="Imagen generada"
+             class="w-full h-52 object-cover cursor-zoom-in"
+             onclick="openLightbox(this.src)">
       {% elif img.status == "failed" %}
         <div class="w-full h-52 flex items-center justify-center bg-red-900/10">
           <div class="text-center px-4">

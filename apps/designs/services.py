@@ -6,7 +6,7 @@ from pathlib import Path
 from django.conf import settings
 from google import genai
 from google.genai import types
-from PIL import Image
+from PIL import Image, ImageOps
 
 from .exceptions import DesignGenerationError
 
@@ -41,6 +41,7 @@ def validate_image_extension(filename: str) -> str:
 def resize_image_if_needed(image_bytes: bytes) -> tuple[bytes, str]:
     img = Image.open(BytesIO(image_bytes))
     fmt = (img.format or "PNG").upper()
+    img = ImageOps.exif_transpose(img)
 
     if img.width > MAX_WIDTH or img.height > MAX_HEIGHT:
         img.thumbnail((MAX_WIDTH, MAX_HEIGHT), Image.LANCZOS)
